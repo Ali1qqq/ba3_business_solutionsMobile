@@ -120,12 +120,10 @@ class BondRecordDataSource extends DataGridSource {
       }
     } else {
       if (column.columnName == Const.rowBondAccount) {
-        print(newCellValue.toString());
-        print(newCellValue.toString());
-        print(dataRowIndex);
+
+
         List<String> result = searchText(newCellValue.toString());
-        print(result);
-        print(result);
+
         if (result.isEmpty) {
           Get.snackbar("خطأ", "الحساب غير موجود");
         } else if (result.length == 1) {
@@ -148,10 +146,10 @@ class BondRecordDataSource extends DataGridSource {
                           bondController.tempBondModel.bondRecord?[dataRowIndex].bondRecAccount = result[index];
                           var accId = accountController.accountList.values.toList().firstWhere((e) => e.accName == result[index]).accId;
                           bondController.tempBondModel.bondRecord?[dataRowIndex].bondRecAccount = accId;
-                          bondController.initPage(bondController.tempBondModel.bondType);
+                          // bondController.initPage(bondController.tempBondModel.bondType);
                           Get.back();
                         },
-                        child: Center(child: Text(result[index],style: TextStyle(fontSize: 20),)),
+                        child: Center(child: Text(result[index],style: const TextStyle(fontSize: 20),)),
                       );
                     }),
               ),
@@ -160,7 +158,7 @@ class BondRecordDataSource extends DataGridSource {
                     onPressed: () {
                       Get.back();
                     },
-                    child: Text("رجوع"))
+                    child: const Text("رجوع"))
               ]);
         }
       }

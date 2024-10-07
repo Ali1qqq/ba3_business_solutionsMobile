@@ -1,16 +1,9 @@
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
-import 'package:ba3_business_solutions/model/product_model.dart';
 import 'package:ba3_business_solutions/view/products/widget/product_details.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../Widgets/new_Pluto.dart';
-import '../../utils/logger.dart';
-import '../widget/filtering_data_grid.dart';
-
 
 class AllProduct extends StatelessWidget {
   const AllProduct({super.key});
@@ -23,7 +16,7 @@ class AllProduct extends StatelessWidget {
 
     return GetBuilder<ProductViewModel>(
         builder: (controller) {
-          return  CustomPlutoGrid(
+          return  CustomPlutoGridWithAppBar(
             title: "جميع المواد",
             onLoaded: (e){
             },

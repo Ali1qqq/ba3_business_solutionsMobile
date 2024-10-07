@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../../Const/const.dart';
 import '../../../controller/user_management_model.dart';
-import 'add_inventory_task.dart';
 import 'add_task.dart';
 import 'all_task_view.dart';
 
@@ -21,16 +20,16 @@ class _TaskManagementTypeState extends State<TaskManagementType> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("إدارة التارجيت"),
+          title: const Text("إدارة التارجيت"),
         ),
         body: Column(
           children: [
             Item("إضافة مهام بالمواد",(){
                Get.to(()=>AddTaskView());
             }),
-            Item("إضافة مهام بالجرد",(){
-              Get.to(()=>AddInventoryTaskView());
-            }),
+            // Item("إضافة مهام بالجرد",(){
+            //   Get.to(()=>AddInventoryTaskView());
+            // }),
             Item("معاينة التاسكات",(){
               checkPermissionForOperation(Const.roleUserRead , Const.roleViewTask).then((value) {
                 if(value) Get.to(()=>AllTaskView());

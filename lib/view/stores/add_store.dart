@@ -69,7 +69,7 @@ class _AddStoreState extends State<AddStore> {
                           const Flexible(flex: 2, child: Text("اسم المستودع :")),
                           Flexible(
                               flex: 3,
-                              child: customTextFieldWithoutIcon(nameController, true, onChanged: (_) {
+                              child: CustomTextFieldWithoutIcon(controller:  nameController, onChanged: (_) {
                                 storeController.editStoreModel?.stName = _;
                               })),
                         ],
@@ -83,7 +83,7 @@ class _AddStoreState extends State<AddStore> {
                           const Flexible(flex: 2, child: Text("رمز المستودع :")),
                           Flexible(
                               flex: 3,
-                              child: customTextFieldWithoutIcon(codeController, true, onChanged: (_) {
+                              child: CustomTextFieldWithoutIcon(controller:  codeController, onChanged: (_) {
                                 storeController.editStoreModel?.stCode = _;
                               })),
                         ],

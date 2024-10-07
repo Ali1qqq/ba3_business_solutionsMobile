@@ -2,7 +2,6 @@
 import 'package:ba3_business_solutions/Const/const.dart';
 import 'package:ba3_business_solutions/model/seller_model.dart';
 import 'package:ba3_business_solutions/utils/generate_id.dart';
-import 'package:ba3_business_solutions/utils/hive.dart';
 import 'package:ba3_business_solutions/view/sellers/widget/all_seller_invoice_view_data_grid_source.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -68,11 +67,6 @@ class SellersViewModel extends GetxController {
       allSellers[userId]?.sellerRecord?.removeWhere((element) => element.selleRecInvId==invId);
       allSellers[userId]?.sellerRecord?.add(seller);
     }
-    WidgetsFlutterBinding.ensureInitialized()
-        .waitUntilFirstFrameRasterized
-        .then((value) {
-      update();
-    });
   }
 
   void deleteGlobalSeller(GlobalModel globalModel){
@@ -210,27 +204,27 @@ Future<String> getSellerComplete(text) async {
   if(await checkPermissionForOperation(Const.roleUserAdmin, Const.roleViewInvoice)){
     return sellerModel!.sellerName!;
   }else{
-    return getSellerNameFromId(getMyUserSellerId());
+    return getSellerNameFromId(getMyUserSellerId())??"";
     }
   }else{
     return sellerModel!.sellerName!;
   }
 }
 
-String getSellerIdFromText(text) {
+String? getSellerIdFromText(text) {
   var sellerController = Get.find<SellersViewModel>();
   if (text != null && text != " " && text != "") {
-    return sellerController.allSellers.values.toList().firstWhereOrNull((element) => element.sellerName!.contains(text))?.sellerId??"";
+    return sellerController.allSellers.values.toList().firstWhereOrNull((element) => element.sellerName!.contains(text))?.sellerId;
   } else {
-    return "";
+    return null;
   }
 }
 
-String getSellerNameFromId(id) {
+String? getSellerNameFromId(id) {
   if (id != null && id != " " && id != "") {
-    return Get.find<SellersViewModel>().allSellers[id]!.sellerName!;
+    return Get.find<SellersViewModel>().allSellers[id]!.sellerName;
   } else {
-    return "";
+    return null;
   }
 
 }

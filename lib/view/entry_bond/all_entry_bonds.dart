@@ -1,15 +1,9 @@
 import 'package:ba3_business_solutions/Const/const.dart';
 import 'package:ba3_business_solutions/controller/entry_bond_view_model.dart';
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../Widgets/new_Pluto.dart';
-import '../../model/global_model.dart';
-import '../../utils/logger.dart';
-import '../widget/filtering_data_grid.dart';
 import 'entry_bond_details_view.dart';
 
 class AllEntryBonds extends StatelessWidget {
@@ -19,13 +13,13 @@ class AllEntryBonds extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<EntryBondViewModel>(
         builder: (controller) {
-          return  CustomPlutoGrid(
-            title: "جميع الفواتير",
-           type:Const.globalTypeBond,
+          return  CustomPlutoGridWithAppBar(
+            title: "جميع سندات القيد",
+           type:Const.globalTypeStartersBond,
             onLoaded: (e){
             },
             onSelected: (p0) {
-              print(p0.row?.cells["bondId"]?.value);
+
               if(p0.row?.cells["bondId"]?.value!='') {
                 Get.to(() => EntryBondDetailsView(
                 oldId: p0.row?.cells["bondId"]?.value,
@@ -33,7 +27,7 @@ class AllEntryBonds extends StatelessWidget {
               }
 
             },
-            modelList: controller.allEntryBonds.values/*.where((element) => element.invRecords?.where((e) => e.invRecId==null,).isEmpty??false,)*/.toList(),
+            modelList: controller.allEntryBonds.values.toList(),
 
           );
         }

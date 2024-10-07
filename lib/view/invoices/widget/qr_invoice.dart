@@ -10,16 +10,17 @@ import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-
 class QRScannerView extends StatefulWidget {
-  const QRScannerView({Key? key}) : super(key: key);
+  const QRScannerView({super.key, required this.whitUnknown});
+
+  final bool whitUnknown;
 
   @override
   State<StatefulWidget> createState() => _QRScannerViewState();
 }
 
 class _QRScannerViewState extends State<QRScannerView> {
- List <ProductModel> data=[];
+  List<ProductModel> data = [];
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -38,7 +39,7 @@ class _QRScannerViewState extends State<QRScannerView> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
+      onWillPop: () async {
         controller?.stopCamera();
         return true;
       },
@@ -48,22 +49,22 @@ class _QRScannerViewState extends State<QRScannerView> {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
-              _buildQrView(context),
+              _buildQrView(context,widget.whitUnknown),
               Container(
                 width: double.infinity,
-                decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))),
+                decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
                 child: Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   // width: double.infinity,
                   child: Row(
                     children: [
-                      SizedBox(width: 20,),
+                      const SizedBox(
+                        width: 20,
+                      ),
                       Wrap(
                         direction: Axis.vertical,
                         children: <Widget>[
-
-                          if(data.isEmpty)
-                            const Text('امسح الباركود'),
+                          if (data.isEmpty) const Text('امسح الباركود'),
                           // Row(
                           //   mainAxisAlignment: MainAxisAlignment.center,
                           //   crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,27 +105,45 @@ class _QRScannerViewState extends State<QRScannerView> {
                           //   ],
                           // ),
 
-                          Text("عدد المنتجات "+data.length.toString(),style: TextStyle(fontSize: 24),),
-                          SizedBox(height: 10,),
-                          for(var i in data)
+                          Text(
+                            "عدد المنتجات ${data.length}",
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          for (var i in data)
                             Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: Row(
                                 children: [
-                                  Text(i.prodName??"not found",style: TextStyle(fontSize: 22),),
-                                  SizedBox(width: 20,),
-                                  Text("السعر: "),
-                                  Text(i.prodCustomerPrice??"not found",style: TextStyle(fontSize: 22),),
-                                  SizedBox(width: 20,),
+                                  Text(
+                                    i.prodName ?? "not found",
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  const Text("السعر: "),
+                                  Text(
+                                    i.prodCustomerPrice ?? "not found",
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
                                   InkWell(
-                                    onTap: (){
+                                    onTap: () {
                                       setState(() {
                                         data.remove(i);
                                       });
                                     },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Icon(Icons.close,color: Colors.red,),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   )
                                 ],
@@ -132,28 +151,37 @@ class _QRScannerViewState extends State<QRScannerView> {
                             )
                         ],
                       ),
-                      Spacer(),
-                      if(data.isNotEmpty)
-                      ElevatedButton(onPressed: (){
-                        Get.back(result: data);
-                      }, child: Text("إضافة")),
-                      SizedBox(width: 50,),
+                      const Spacer(),
+                      if (data.isNotEmpty)
+                        ElevatedButton(
+                            onPressed: () {
+
+                              Get.back(result: data);
+                            },
+                            child: const Text("إضافة")),
+                      const SizedBox(
+                        width: 50,
+                      ),
                     ],
                   ),
                 ),
               ),
-                Align(
-                    alignment: Alignment.topRight,
-                    child: InkWell(
-                      onTap: (){
-                        Get.back();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(50.0),
-                        child: Container(width: 75,height: 75,decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)),
-                        child: Icon(Icons.arrow_back),),
+              Align(
+                  alignment: Alignment.topRight,
+                  child: InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(50.0),
+                      child: Container(
+                        width: 75,
+                        height: 75,
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                        child: const Icon(Icons.arrow_back),
                       ),
-                    ))
+                    ),
+                  ))
             ],
           ),
         ),
@@ -161,7 +189,7 @@ class _QRScannerViewState extends State<QRScannerView> {
     );
   }
 
-  Widget _buildQrView(BuildContext context) {
+  Widget _buildQrView(BuildContext context,bool withUnknown) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     // var scanArea = (MediaQuery.of(context).size.width < 400 ||
     //     MediaQuery.of(context).size.height < 400)
@@ -171,7 +199,9 @@ class _QRScannerViewState extends State<QRScannerView> {
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
       key: qrKey,
-      onQRViewCreated: _onQRViewCreated,
+      onQRViewCreated: (p0) {
+        _onQRViewCreated(p0,withUnknown);
+      },
       overlay: QrScannerOverlayShape(
           borderColor: Colors.red,
           borderRadius: 10,
@@ -179,59 +209,70 @@ class _QRScannerViewState extends State<QRScannerView> {
           borderWidth: 10,
           // cutOutSize: scanArea
           cutOutHeight: 350,
-          cutOutWidth: 500
-      ),
+          cutOutWidth: 500),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  void _onQRViewCreated(QRViewController controller,bool withUnknown) {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData)  {
-      print(scanData.format==BarcodeFormat.qrcode);
-      if(scanData.code!=null){
-        if(data.firstWhereOrNull((element) => element.prodBarcode==scanData.code)==null&&scanData.format!=BarcodeFormat.qrcode){
+    controller.scannedDataStream.listen((scanData) {
 
+      if (scanData.code != null) {
+        if (data.firstWhereOrNull((element) => element.prodBarcode == scanData.code) == null && scanData.format != BarcodeFormat.qrcode) {
           ProductViewModel productViewController = Get.find<ProductViewModel>();
 
-         var _= productViewController.productDataMap.values.toList().firstWhereOrNull((element) => element.prodBarcode==scanData.code);
-         if(_!=null){
-           AudioPlayer().play(AssetSource('barcode.m4a'));
-           data.add(_);
-           setState(() {
+          var _ = productViewController.productDataMap.values.toList().firstWhereOrNull((element) => element.prodBarcode == scanData.code);
 
-           });
-           print("object");
-         }else{
+          if(withUnknown){
+
+            AudioPlayer().play(AssetSource('barcode.m4a'));
+            if(_ != null) {
+
+              data.add(_);
+            } else{
+
+              data.add(ProductModel(prodName: scanData.code,prodBarcode: scanData.code,prodCustomerPrice: "0",));
+            }
+            setState(() {});
+          }
+         else if (_ != null&&!withUnknown) {
+            AudioPlayer().play(AssetSource('barcode.m4a'));
+            data.add(_);
+            setState(() {});
+          } else {
             controller.pauseCamera();
             Get.defaultDialog(
-              onWillPop: ()async{
-                controller.resumeCamera();
-                return true;
-              },
-                title: "غير موجود",middleText: "غير موجود "+scanData.code!+"المنتح صاحب الباركود ",actions: [
-              ElevatedButton(onPressed: (){
-                Get.back();
-                controller.resumeCamera();
-                }, child: Text("إلغاء")),
-              ElevatedButton(onPressed: ()async{
-                Get.back();
-               await Get.to(()=>AddProduct(oldBarcode:scanData.code));
-                controller.resumeCamera();
-                }, child: Text("إضافة المنتح")),
-            ]);
+                onWillPop: () async {
+                  controller.resumeCamera();
+                  return true;
+                },
+                title: "غير موجود",
+                middleText: "غير موجود " + scanData.code! + "المنتح صاحب الباركود ",
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        controller.resumeCamera();
+                      },
+                      child: const Text("إلغاء")),
+                  ElevatedButton(
+                      onPressed: () async {
+                        Get.back();
+                        await Get.to(() => AddProduct(oldBarcode: scanData.code));
+                        controller.resumeCamera();
+                      },
+                      child: const Text("إضافة المنتح")),
+                ]);
+          }
 
-         }
-
-        //  Get.back(result: {"data":data});
-
+          //  Get.back(result: {"data":data});
         }
       }
 
-
-     //  Get.back();
+      //  Get.back();
       // setState(() {
       //   result = scanData;
       // });

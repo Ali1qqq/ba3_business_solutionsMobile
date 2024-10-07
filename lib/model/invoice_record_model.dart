@@ -23,14 +23,26 @@ class InvoiceRecordModel {
 
   InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) {
     invRecId = map['invRecId'];
-    invRecProduct = map['invRecProduct'];
+    invRecProduct =map['invRecProduct'];
     invRecQuantity = int.tryParse(map['invRecQuantity'].toString());
     invRecSubTotal = double.tryParse(map['invRecSubTotal'].toString());
     invRecTotal = double.tryParse(map['invRecTotal'].toString());
     invRecVat = double.tryParse((map['invRecVat']).toString());
     invRecIsLocal = map['invRecIsLocal'];
     invRecGift = int.tryParse(map['invRecGift'].toString());
-    invRecGiftTotal = map['invRecGiftTotal'];
+    invRecGiftTotal = (int.tryParse(map['invRecGiftTotal'].toString())??0 )*1.0;
+  }
+
+  InvoiceRecordModel.fromJsonPluto(Map<dynamic, dynamic> map) {
+    invRecId = map['invRecId'];
+    invRecProduct =getProductIdFromName(map['invRecProduct'])??map['invRecProduct'];
+    invRecQuantity = int.tryParse(replaceArabicNumbersWithEnglish(map['invRecQuantity'].toString()));
+    invRecSubTotal = double.tryParse(replaceArabicNumbersWithEnglish(map['invRecSubTotal'].toString()));
+    invRecTotal = double.tryParse(map['invRecTotal'].toString());
+    invRecVat = double.tryParse((map['invRecVat']).toString());
+    invRecIsLocal = map['invRecIsLocal'];
+    invRecGift = int.tryParse(replaceArabicNumbersWithEnglish(map['invRecGift'].toString()));
+    invRecGiftTotal = (int.tryParse(map['invRecGiftTotal'].toString())??0 )*1.0;
   }
 
   toJson() {
@@ -124,15 +136,8 @@ class InvoiceRecordModel {
         checkReadOnly: (row, cell) {
           return false;
         },
-      ): getProductModelFromId(invRecProduct)?.prodName,
-      PlutoColumn(
-        title: 'الهدايا',
-        field: "invRecGift",
-        type: PlutoColumnType.text(),
-        checkReadOnly: (row, cell) {
-          return cell.row.cells['invRecProduct']?.value == '';
-        },
-      ): invRecGift,
+      ): getProductModelFromId(invRecProduct)?.prodName??invRecProduct,
+
       PlutoColumn(
         title: 'الكمية',
         field: 'invRecQuantity',
@@ -161,7 +166,21 @@ class InvoiceRecordModel {
         checkReadOnly: (row, cell) {
           return cell.row.cells['invRecProduct']?.value == '';
         },
-      ): (((invRecSubTotal??0)+(invRecVat??0)).toInt())*(invRecQuantity??1),
+      ): invRecTotal,
+      PlutoColumn(
+        title: 'الخصم',
+        field: 'invRecDis',
+        type: PlutoColumnType.text(),
+
+      ): '',
+      PlutoColumn(
+        title: 'الهدايا',
+        field: "invRecGift",
+        type: PlutoColumnType.text(),
+        checkReadOnly: (row, cell) {
+          return cell.row.cells['invRecProduct']?.value == '';
+        },
+      ): invRecGift,
 
 
     };

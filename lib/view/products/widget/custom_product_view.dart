@@ -1,3 +1,4 @@
+/*
 import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 import 'package:ba3_business_solutions/model/product_model.dart';
 import 'package:ba3_business_solutions/view/products/widget/product_details.dart';
@@ -32,7 +33,7 @@ class CustomAllProduct extends StatelessWidget {
           ));
         },
         init: ()async {
-          IsolateViewModel isolateViewModel = Get.find<IsolateViewModel>();
+          // IsolateViewModel isolateViewModel = Get.find<IsolateViewModel>();
           isolateViewModel.init();
           print("from product View");
           final a = await   compute<({Map<String, ProductModel> data ,IsolateViewModel isolateViewModel}),List<DataGridRow>>((message) {
@@ -57,4 +58,4 @@ class CustomAllProduct extends StatelessWidget {
       ),
     );
   }
-}
+}*/

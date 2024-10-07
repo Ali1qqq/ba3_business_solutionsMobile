@@ -1,37 +1,43 @@
-enum RecordType { bond, invoice, product, account, pattern, undefined, store, cheque, costCenter, sellers, user, role, task, inventory, entryBond }
+enum RecordType { bond, invoice, product, account, pattern, undefined, store, cheque, costCenter, sellers, user, role, task, inventory, entryBond ,accCustomer,warrantyInv,changes}
 
 String generateId(RecordType recordType) {
-  var _ = DateTime.now().microsecondsSinceEpoch.toString();
+  var epoch = DateTime.now().microsecondsSinceEpoch.toString();
   switch (recordType) {
     case RecordType.bond:
-      return "bon$_";
+      return "bon$epoch";
     case RecordType.invoice:
-      return "inv$_";
+      return "inv$epoch";
     case RecordType.product:
-      return "prod$_";
+      return "prod$epoch";
     case RecordType.account:
-      return "acc$_";
+      return "acc$epoch";
     case RecordType.pattern:
-      return "pat$_";
+      return "pat$epoch";
     case RecordType.store:
-      return "store$_";
+      return "store$epoch";
     case RecordType.cheque:
-      return "cheq$_";
+      return "cheq$epoch";
     case RecordType.costCenter:
-      return "CoCe$_";
+      return "CoCe$epoch";
     case RecordType.sellers:
-      return "seller$_";
+      return "seller$epoch";
     case RecordType.user:
-      return "user$_";
+      return "user$epoch";
     case RecordType.role:
-      return "role$_";
+      return "role$epoch";
     case RecordType.task:
-      return "task$_";
+      return "task$epoch";
     case RecordType.inventory:
-      return "inventory$_";
+      return "inventory$epoch";
     case RecordType.entryBond:
-      return "entryBond$_";
+      return "entryBond$epoch";
+    case RecordType.accCustomer:
+      return "accCustomer$epoch";
+    case RecordType.warrantyInv:
+      return "warrantyInv$epoch";
+    case RecordType.changes:
+      return "changes$epoch";
     case RecordType.undefined:
-      return _;
+      return epoch;
   }
 }

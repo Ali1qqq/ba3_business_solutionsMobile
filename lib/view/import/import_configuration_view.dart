@@ -1,9 +1,10 @@
-
 import 'package:ba3_business_solutions/Const/const.dart';
 import 'package:ba3_business_solutions/controller/account_view_model.dart';
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
+import 'package:ba3_business_solutions/model/AccountCustomer.dart';
 import 'package:ba3_business_solutions/model/account_model.dart';
 import 'package:ba3_business_solutions/model/cheque_rec_model.dart';
+import 'package:ba3_business_solutions/model/entry_bond_record_model.dart';
 import 'package:ba3_business_solutions/model/global_model.dart';
 import 'package:ba3_business_solutions/model/product_model.dart';
 import 'package:ba3_business_solutions/utils/generate_id.dart';
@@ -15,6 +16,7 @@ import 'package:get/get.dart';
 class ImportConfigurationView extends StatefulWidget {
   final List<List<String>> productList;
   final List<String> rows;
+
   const ImportConfigurationView({super.key, required this.productList, required this.rows});
 
   @override
@@ -51,28 +53,33 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
   };
 
   Map configAccount = {
-    "الاسم": "accName",
+    "الحساب": "accName",
     "رمز الحساب": "accCode",
-    "اسم المجموعة": 'accParentId',
+    "الحساب الرئيسي": 'accParentId',
+    "اسم حساب الزبون": 'customerAccountName',
+    "رقم البطاقة": 'customerCardNumber',
+    "الترميز الضريبي": 'customerVAT',
   };
 
   Map configCheque = {
     // "الاسم": "cheqName",
     "المبلغ": "cheqAllAmount",
     // "": "cheqRemainingAmount",
-    "الحساب ": "cheqPrimeryAccount",
+    // "الحساب ": "cheqPrimeryAccount",
     "الحساب المقابل": "cheqSecoundryAccount",
     "رثم الورقة": "cheqNum",
-    "تاريخ الاستحقاق": "cheqDate",
+    "تاريخ الورقة": "cheqDate",
+    "تاريخ الاستحقاق": "cheqDateDue",
     "حالة الورقة": "cheqStatus",
     "اسم النمط": "cheqType",
     // "": "cheqBankAccount"
-    };
+  };
 
   Map config = {};
   Map setting = {};
 
   RecordType? type;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,8 +99,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
                       config = configProduct;
                     } else if (_ == RecordType.account) {
                       config = configAccount;
-                    }
-                    else if (_ == RecordType.cheque) {
+                    } else if (_ == RecordType.cheque) {
                       config = configCheque;
                     }
                     setState(() {});
@@ -104,11 +110,9 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
               const Text("النوع"),
             ],
           ),
-          if (type == null)
-            const Expanded(child: SizedBox())
-          else
+          if (type != null)
             SizedBox(
-                width: double.infinity,
+                width: Get.width,
                 child: Wrap(
                   // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   // mainAxisSize: MainAxisSize.max,
@@ -155,8 +159,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
                   await addProductFree();
                 } else if (type == RecordType.account) {
                   await addAccount();
-                }
-                 else if (type == RecordType.cheque) {
+                } else if (type == RecordType.cheque) {
                   await addCheque();
                 }
                 // Get.offAll(() => HomeView());
@@ -195,7 +198,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
       var parentId = "F" + element[setting["prodParentId"]];
       // var isRoot = element[setting["prodParentId"]].isBlank;
       // print("code "+code);
-      String chechIsExist = isGroup ? getProductIdFromName("F-" + element[setting["prodName"]].replaceAll("- ", "")) : getProductIdFromName("F-" + element[setting["prodName"]]);
+      String? chechIsExist = isGroup ? getProductIdFromName("F-" + element[setting["prodName"]].replaceAll("- ", "")) : getProductIdFromName("F-" + element[setting["prodName"]]);
       // print("parentId "+parentId);
       // print("FullCode "+element[setting["prodCode"]]);
       // print("isRoot "+isRoot.toString());
@@ -203,7 +206,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
       // print(element[setting['prodType']].removeAllWhitespace=="مستودعية");
       // print(!(element[setting['prodType']].removeAllWhitespace=="خدمية"||element[setting['prodType']].removeAllWhitespace=="مستودعية"));
       // print("===");
-      if (chechIsExist == "") {
+      if (chechIsExist == "" || chechIsExist == null) {
         finalData.add(ProductModel(
             prodId: generateId(RecordType.product),
             prodName: "F-" + element[setting["prodName"]],
@@ -263,7 +266,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
       print(i.toString() + " OF " + finalData.length.toString());
 
       ///FireBse Todo
-      // await FirebaseFirestore.instance.collection(Const.productsCollection).doc(element.prodId).set(element.toJson());
+      await FirebaseFirestore.instance.collection(Const.productsCollection).doc(element.prodId).set(element.toJson());
       HiveDataBase.productModelBox.put(element.prodId, element);
     }
     // i = 0;
@@ -302,7 +305,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
       var parentId = element[setting["prodParentId"]];
       // var isRoot = element[setting["prodParentId"]].isBlank;
       // print("code "+code);
-      String chechIsExist = isGroup ? getProductIdFromName(element[setting["prodName"]].replaceAll("- ", "")) : getProductIdFromName(element[setting["prodName"]]);
+      String? chechIsExist = isGroup ? getProductIdFromName(element[setting["prodName"]].replaceAll("- ", "")) : getProductIdFromName(element[setting["prodName"]]);
       // print("parentId "+parentId);
       // print("FullCode "+element[setting["prodCode"]]);
       // print("isRoot "+isRoot.toString());
@@ -310,7 +313,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
       // print(element[setting['prodType']].removeAllWhitespace=="مستودعية");
       // print(!(element[setting['prodType']].removeAllWhitespace=="خدمية"||element[setting['prodType']].removeAllWhitespace=="مستودعية"));
       // print("===");
-      if (chechIsExist == "") {
+      if (chechIsExist == "" || chechIsExist == null) {
         finalData.add(ProductModel(
             prodId: generateId(RecordType.product),
             prodName: element[setting["prodName"]],
@@ -319,7 +322,7 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
             prodBarcode: element[setting["prodBarcode"]],
             // prodIsLocal: !element[setting["prodName"]].contains("مستعمل"),
             prodIsLocal: true,
-            prodFullCode: "L" + element[setting["prodCode"]],
+            prodFullCode: "L${element[setting["prodCode"]]}",
             // prodGroupCode: element[setting["prodGroupCode"]],
             //todo
             prodCustomerPrice: element[setting['prodCustomerPrice']],
@@ -367,16 +370,16 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
       i++;
       print("$i OF ${finalData.length}");
       print(element.toJson());
-      // await FirebaseFirestore.instance.collection(Const.productsCollection).doc(element.prodId).set(element.toJson());
+      await FirebaseFirestore.instance.collection(Const.productsCollection).doc(element.prodId).set(element.toJson());
       HiveDataBase.productModelBox.put(element.prodId, element);
       print(element.prodParentId);
-      if(element.prodParentId!=null&&element.prodParentId!='') {
+      if (element.prodParentId != null && element.prodParentId != '') {
         ProductModel parentModel = getProductModelFromId(element.prodParentId!)!;
         parentModel.prodChild?.add(element.prodId);
         HiveDataBase.productModelBox.put(parentModel.prodId, parentModel);
-        // FirebaseFirestore.instance.collection(Const.productsCollection).doc(parentModel.prodId).update({
-        //   'prodChild': FieldValue.arrayUnion([element.prodId]),
-        // });
+        FirebaseFirestore.instance.collection(Const.productsCollection).doc(parentModel.prodId).update({
+          'prodChild': FieldValue.arrayUnion([element.prodId]),
+        });
       }
     }
 
@@ -411,125 +414,147 @@ class _ImportConfigurationViewState extends State<ImportConfigurationView> {
     // AccountViewModel accountViewModel = Get.find<AccountViewModel>();
     List<AccountModel> finalData = [];
     for (var element in widget.productList) {
-      bool accIsParent = element[setting['accParentId']].isEmpty;
-      finalData.add(AccountModel(
-        accId: generateId(RecordType.account),
-        accName: "F-${(element[setting["accName"]]).replaceAll("-", "")}",
-        accCode: "F-${element[setting["accCode"]].replaceAll("-", "")}",
-        accComment: '',
-        // accType: element[setting["accType"]]=="حساب تجميعي"?Const.accountTypeAggregateAccount:element[setting["accType"]]=="حساب ختامي"?Const.accountTypeFinalAccount:Const.accountTypeDefault,
-        accType: Const.accountTypeDefault,
-        accVat: 'GCC',
-        accParentId: accIsParent ? null : "F-" + element[setting['accParentId']],
-        accIsParent: accIsParent,
-      ));
+      if (element[setting["accCode"]] != '') {
+        bool accIsParent = element[setting['accParentId']].isEmpty;
+        if (accIsParent) {
+          finalData.add(AccountModel(
+            accId: getAccountIdFromText(element[setting["accName"]].replaceAll("-", "")),
+            accName: (element[setting["accName"]].replaceAll("-", "")),
+            accCode: element[setting["accCode"]].replaceAll("-", ""),
+            accComment: '',
+            accType: Const.accountTypeDefault,
+            accVat: 'GCC',
+            accParentId: accIsParent ? null : getAccountIdFromText(element[setting['accParentId']]),
+            accIsParent: accIsParent,
+          ));
+        } else {
+          finalData
+              .where(
+                (e) => e.accId == getAccountIdFromText(element[setting['accParentId']]),
+              )
+              .first
+              .accChild
+              .add(getAccountIdFromText(element[setting["accName"]].replaceAll("-", "")));
+          finalData.add(AccountModel(
+            accId: getAccountIdFromText(element[setting["accName"]].replaceAll("-", "")),
+            accName: (element[setting["accName"]].replaceAll("-", "")),
+            accCode: element[setting["accCode"]].replaceAll("-", ""),
+            accComment: '',
+            accType: Const.accountTypeDefault,
+            accVat: 'GCC',
+            accParentId: getAccountIdFromText(element[setting['accParentId']]),
+            accIsParent: accIsParent,
+          ));
+        }
+      } else {
+        // print(element[setting["accName"]]);
+        if (finalData.last.accCustomer == null) {
+          finalData.last.accCustomer = [
+            AccountCustomer(
+              customerAccountId: generateId(RecordType.accCustomer),
+              customerAccountName: element[setting["accName"]],
+              customerCardNumber: element[setting["customerCardNumber"]],
+              customerVAT: element[setting["customerVAT"]],
+              mainAccount: finalData.last.accId,
+            )
+          ];
+        } else {
+          finalData.last.accCustomer!.add(AccountCustomer(
+            customerAccountId: generateId(RecordType.accCustomer),
+            customerAccountName: element[setting["accName"]],
+            customerCardNumber: element[setting["customerCardNumber"]],
+            customerVAT: element[setting["customerVAT"]],
+            mainAccount: finalData.last.accId,
+          ));
+        }
+      }
     }
-    int i = 0;
     print(finalData.length);
-
-    for (var element in finalData) {
-      print("|" + element.accName! + "|" + element.accCode.toString());
-    }
+    int i = 0;
+    // await FirebaseFirestore.instance.collection(Const.accountsCollection).doc("set").set({"s":"s"});
     for (var element in finalData) {
       i++;
-      print(i.toString());
-      // await FirebaseFirestore.instance.collection(Const.accountsCollection).doc(element.accId).set(element.toJson());
-      // await accountViewModel.addNewAccount(element, withLogger: false);
-      print(element.accId);
-      element.accId = generateId(RecordType.account);
-      print(element.accId);
-      await FirebaseFirestore.instance.collection(Const.accountsCollection).doc(element.accId).set(element.toJson());
-      HiveDataBase.accountModelBox.put(element.accId, element);
+
+      print( i);
+
+      await HiveDataBase.accountModelBox.put(element.accId, element);
+      for(AccountCustomer customer in element.accCustomer??[]){
+        await HiveDataBase.accountCustomerBox.put(customer.customerAccountId, customer);
+
+      }
+      await FirebaseFirestore.instance.collection(Const.accountsCollection).doc(element.accId).set(element.toJson(), SetOptions(merge: true));
+/*      HiveDataBase.accountModelBox.put(element.accId, element);
+ request.time < timestamp.date(2030, 12, 4)
+      if (!element.accIsParent! || element.accParentId != null) {
+        FirebaseFirestore.instance.collection(Const.accountsCollection).doc(element.accParentId).update({
+          'accChild': FieldValue.arrayUnion([element.accId]),
+        });*/
+      // FirebaseFirestore.instance.collection(Const.accountsCollection).doc(element.accId).update({
+      //   "accParentId":getAccountIdFromText(element.accParentId)
+      // });
+      // }
     }
-    // i=0;
-    // for (var element in finalData) {
-    //   i++;
-    //   print(i.toString());
-    //   if(!element.accIsParent! ||element.accParentId!=null){
-    //     FirebaseFirestore.instance.collection(Const.accountsCollection).doc(getAccountIdFromText(element.accParentId)).update({
-    //       'accChild': FieldValue.arrayUnion([element.accId]),
-    //     });
-    //     FirebaseFirestore.instance.collection(Const.accountsCollection).doc(element.accId).update({
-    //       "accParentId":getAccountIdFromText(element.accParentId)
-    //     });
-    //   }
-    // }
   }
 
-Future<void> addCheque() async {
+  Future<void> addCheque() async {
     List<GlobalModel> finalData = [];
-    var cheqCode = 2 ;
-    for (var i = 0 ; i< widget.productList.length ; i++) {
+    var cheqCode = 0;
+    for (var i = 0; i < widget.productList.length; i++) {
       List<String> element = widget.productList[i];
       cheqCode++;
-       String cheqId = generateId(RecordType.cheque);
-      String initBond = await Future.delayed(const Duration(milliseconds: 100)).then((value) {
-         return generateId(RecordType.bond);
-       },);
-        String globalBondId = await Future.delayed(const Duration(milliseconds: 100)).then((value) {
-         return generateId(RecordType.bond);
-       },);
-     //  String initBond = generateId(RecordType.bond);
-        // await Future.delayed(const Duration(microseconds: 100));
-        //  String globalBondId = generateId(RecordType.bond);
-        await Future.delayed(const Duration(milliseconds: 100));
-       String cheqType =element[setting["cheqType"]].removeAllWhitespace == "شيكات مدفوعة".removeAllWhitespace?Const.chequeTypePay:Const.chequeTypePay; 
-       String cheqStatus =element[setting["cheqStatus"]].removeAllWhitespace == "مدفوعة".removeAllWhitespace?Const.chequeStatusPaid:Const.chequeStatusNotPaid;
-       print(element[setting["cheqPrimeryAccount"]]);
-       String cheqPrimeryAccount=getAccountIdFromName(element[setting["cheqPrimeryAccount"]])!.accId!;
-       String cheqSecoundryAccount=getAccountIdFromName(element[setting["cheqSecoundryAccount"]].toString())!.accId!;
-       String cheqBankAccount=getAccountIdFromText("المصرف");
-       double cheqAllAmount=double.parse(element[setting["cheqAllAmount"]].replaceAll(",", ""));
-       int _year = int.parse(element[setting["cheqDate"]].toString().split("-")[2]);
-       int _min = int.parse(element[setting["cheqDate"]].toString().split("-")[1]);
-       int _sec = int.parse(element[setting["cheqDate"]].toString().split("-")[0]);
-       DateTime cheqDate = DateTime(_year,_min,_sec);
-      finalData.add( 
-       GlobalModel(
-        cheqAllAmount:cheqAllAmount.toString(),
-        cheqBankAccount:cheqBankAccount,
-        cheqCode:cheqCode.toString(),
-        cheqDate:cheqDate.toString(),
-        entryBondId: globalBondId,
+      String cheqId = generateId(RecordType.cheque);
+
+      await Future.delayed(const Duration(milliseconds: 100));
+      String cheqType = element[setting["cheqType"]].removeAllWhitespace == "شيكات مدفوعة".removeAllWhitespace ? Const.chequeTypePay : Const.chequeTypePay;
+      String cheqStatus = element[setting["cheqStatus"]].removeAllWhitespace == "مدفوعة".removeAllWhitespace ? Const.chequeStatusPaid : Const.chequeStatusNotPaid;
+      // print(element[setting["cheqPrimeryAccount"]].replaceAll("-", ""));
+      // print(element[setting["cheqPrimeryAccount"]]);
+      String cheqPrimeryAccount = getAccountIdFromText("اوراق الدفع");
+      // print(element[setting["cheqSecoundryAccount"]].toString().split("-")[1]);
+      // print(element[setting["cheqSecoundryAccount"]].toString().split("-")[0]);
+
+      String cheqSecoundryAccount = getAccountIdFromText(element[setting["cheqSecoundryAccount"]].toString().replaceAll("-", ""));
+      if (cheqSecoundryAccount == '') {
+        print(element[setting["cheqSecoundryAccount"]]);
+      }
+      String cheqBankAccount = getAccountIdFromText("المصرف");
+      String des = "سند قيد مولد من شيك رقم $cheqCode";
+      print(element[setting["cheqAllAmount"]].replaceAll(",", ""));
+      double cheqAllAmount = double.parse(element[setting["cheqAllAmount"]].replaceAll(",", ""));
+      int year = int.parse(element[setting["cheqDate"]].toString().split("-")[2]);
+      int min = int.parse(element[setting["cheqDate"]].toString().split("-")[1]);
+      int sec = int.parse(element[setting["cheqDate"]].toString().split("-")[0]);
+      int yearDue = int.parse(element[setting["cheqDateDue"]].toString().split("-")[2]);
+      int minDue = int.parse(element[setting["cheqDateDue"]].toString().split("-")[1]);
+      int secDue = int.parse(element[setting["cheqDateDue"]].toString().split("-")[0]);
+      DateTime cheqDate = DateTime(year, min, sec);
+      DateTime cheqDateDue = DateTime(yearDue, minDue, secDue);
+      finalData.add(GlobalModel(
+        cheqAllAmount: cheqAllAmount.toString(),
+        cheqBankAccount: cheqBankAccount,
+        cheqCode: cheqCode.toString(),
+        cheqDate: cheqDate.toString(),
+        cheqDeuDate: cheqDateDue.toString(),
+        entryBondId: generateId(RecordType.entryBond),
         cheqId: cheqId,
-        cheqName:"${element[setting["cheqType"]]}رقم الورقة ${element[setting["cheqNum"]]}",
-        cheqPrimeryAccount:cheqPrimeryAccount,
-        cheqSecoundryAccount:cheqSecoundryAccount,
-        cheqRecords:[
-           ChequeRecModel(
-              cheqRecAmount: cheqAllAmount.toString(),
-              cheqRecEntryBondId: initBond,
-              cheqRecChequeType: cheqType,
-              cheqRecId: cheqId,
-              cheqRecPrimeryAccount: cheqPrimeryAccount,
-              cheqRecSecoundryAccount:cheqSecoundryAccount,
-              cheqRecType: Const.chequeRecTypeInit,
-            ),
-          if(cheqStatus==Const.chequeStatusPaid)
-            ChequeRecModel(
-              cheqRecAmount: cheqAllAmount.toString(),
-              cheqRecEntryBondId: generateId(RecordType.bond),
-              cheqRecChequeType: cheqType,
-              cheqRecId: cheqId,
-              cheqRecPrimeryAccount: cheqSecoundryAccount,
-              cheqRecSecoundryAccount:cheqBankAccount,
-              cheqRecType: Const.chequeRecTypeAllPayment,
-            )
+        cheqName: "${element[setting["cheqType"]]}رقم الورقة ${element[setting["cheqNum"]]}",
+        cheqPrimeryAccount: cheqPrimeryAccount,
+        cheqSecoundryAccount: cheqSecoundryAccount,
+        entryBondRecord: [
+          EntryBondRecordModel("01", cheqAllAmount, 0, cheqPrimeryAccount, des),
+          EntryBondRecordModel("02", 0, cheqAllAmount, cheqSecoundryAccount, des),
         ],
-        cheqRemainingAmount:cheqStatus==Const.chequeStatusPaid?"0":cheqAllAmount.toString(),
-        cheqStatus:cheqStatus,
-        cheqType:cheqType,
+        cheqRemainingAmount: cheqStatus == Const.chequeStatusPaid ? "0" : cheqAllAmount.toString(),
+        cheqStatus: cheqStatus,
+        cheqType: cheqType,
         globalType: Const.globalTypeCheque,
-       )
-      );
-    }    
-     for (var element in finalData) {
-        print(element.toFullJson());
-
-      HiveDataBase.globalModelBox.put(element.entryBondId, element);
+      ));
     }
-    
+    print(finalData.length);
+    for (var element in finalData) {
+      print(element.toFullJson());
+
+      HiveDataBase.globalModelBox.put(element.cheqId, element);
+    }
   }
-
-
 }

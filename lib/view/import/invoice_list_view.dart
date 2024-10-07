@@ -40,7 +40,7 @@ class InvoiceListView extends StatelessWidget {
                   Text(invoiceList[index].invId.toString()),
                   Text("المجموع: "+invoiceList[index].invTotal.toString()),
                   Text("الوقت: "+invoiceList[index].invDate.toString()),
-                  Text("البائع: "+getSellerNameFromId(invoiceList[index].invSeller.toString())),
+                  Text("البائع:  ${getSellerNameFromId(invoiceList[index].invSeller.toString())}"),
                   Text("المستودع: "+getStoreNameFromId(invoiceList[index].invStorehouse.toString())),
                  Text("من: "+(invoiceList[index].invPrimaryAccount == null ?"لا يوجد":getAccountNameFromId(invoiceList[index].invPrimaryAccount.toString()))),
                  Text("الى: "+(invoiceList[index].invSecondaryAccount == null ?"لا يوجد":getAccountNameFromId(invoiceList[index].invSecondaryAccount.toString()))),
@@ -49,9 +49,9 @@ class InvoiceListView extends StatelessWidget {
                   Text("رقم السند: "+invoiceList[index].bondCode.toString()),
                 ],
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               // Container(height: 2,width: double.infinity,color: Colors.grey.shade300,),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
                const Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Row(

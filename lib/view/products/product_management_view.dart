@@ -30,7 +30,7 @@ class ProductManagementView extends StatelessWidget {
             Item("لم يباع ابدا", () {
               Map<String, ProductModel> data = productViewModel.productDataMap ;
               data.removeWhere((key, value) => value.prodRecord!.isNotEmpty);
-              Get.to(()=>CustomAllProduct(data: data ,));
+              // Get.to(()=>CustomAllProduct(data: data ,));
             }),
           ],
         ),

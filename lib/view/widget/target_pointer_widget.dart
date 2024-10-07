@@ -25,8 +25,8 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
       children: [
         _buildWidgetPointerExample(context),
         Container(
-          height: 75,
-          width: 100,
+          height: 50,
+          width: 110,
           decoration: BoxDecoration(color: const Color.fromRGBO(33, 33, 33, 1),borderRadius: BorderRadius.circular(10)),
           child: Center(
             child: Text(
@@ -107,8 +107,8 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
       axes: <RadialAxis>[
         RadialAxis(
           interval: 5000,
-          labelOffset: 0.1,
-          tickOffset: 0.125,
+          labelOffset: 0.150,
+          tickOffset: .25,
           minorTicksPerInterval: 0,
           labelsPosition: ElementsPosition.outside,
           offsetUnit: GaugeSizeUnit.factor,
@@ -120,7 +120,7 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
             needleEndWidth: 5,
             needleLength: 0.7,
             value: _value.toDouble(),
-            knobStyle: KnobStyle(knobRadius: 0)),
+            knobStyle: const KnobStyle(knobRadius: 0)),
             // WidgetPointer(
             //     value: _value.toDouble(),
             //     child: Container(

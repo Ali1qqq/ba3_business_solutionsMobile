@@ -23,12 +23,12 @@ class _ChequeTypeState extends State<ChequeType> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("الشيكات"),
+          title: const Text("الشيكات"),
         ),
         body: Column(
           children: [
             Item("إضافة شيك",(){
-              Get.to(() => AddCheque());
+              Get.to(() => const AddCheque());
             }),
             Item("معاينة الشيكات",(){
               checkPermissionForOperation(Const.roleUserRead , Const.roleViewCheques).then((value) {

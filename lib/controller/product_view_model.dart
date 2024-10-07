@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:ba3_business_solutions/Widgets/new_Pluto.dart';
 import 'package:ba3_business_solutions/controller/changes_view_model.dart';
 import 'package:ba3_business_solutions/controller/invoice_view_model.dart';
 import 'package:ba3_business_solutions/model/global_model.dart';
@@ -20,7 +19,6 @@ import '../model/invoice_record_model.dart';
 import '../model/product_model.dart';
 import '../model/product_tree.dart';
 import '../utils/logger.dart';
-import '../view/invoices/widget/custom_TextField.dart';
 import '../view/products/widget/product_record_data_source.dart';
 
 class ProductViewModel extends GetxController {
@@ -102,8 +100,8 @@ class ProductViewModel extends GetxController {
 
 
 
-  List<ProductModel> searchOfProductByText(query) {
-    print(query);
+  List<ProductModel> searchOfProductByText(query,bool withGroup) {
+
     List<ProductModel> productsForSearch = [];
      query = replaceArabicNumbersWithEnglish(query);
     String query2 = '';
@@ -117,7 +115,38 @@ class ProductViewModel extends GetxController {
       query2 = query;
     }
     productsForSearch = productDataMap.values.where((element) {
-      if( HiveDataBase.getIsFree()) {
+      if( HiveDataBase.getWithFree()) {
+        return  !(element.prodName?.startsWith("F")??true);
+      } else {
+        return true;
+      }
+    },).toList().where((item) {
+      bool prodName = item.prodName.toString().toLowerCase().contains(query3.toLowerCase()) && item.prodName.toString().toLowerCase().contains(query2.toLowerCase());
+      // bool prodCode = item.prodCode.toString().toLowerCase().contains(query.toLowerCase());
+      bool prodCode = item.prodFullCode.toString().toLowerCase().contains(query.toLowerCase());
+      bool prodBarcode = item.prodBarcode.toString().toLowerCase().contains(query.toLowerCase());
+      //bool prodId = item.prodId.toString().toLowerCase().contains(query.toLowerCase());
+      return (prodName || prodCode || prodBarcode) && item.prodIsGroup==withGroup;
+    }).toList();
+
+    return productsForSearch.toList();
+  }
+/*  List<ProductModel> searchOfProductGroupByText(query) {
+
+    List<ProductModel> productsForSearch = [];
+     query = replaceArabicNumbersWithEnglish(query);
+    String query2 = '';
+    String query3 = '';
+    if (query.contains(" ")) {
+      query3 = query.split(" ")[0];
+      query2 = query.split(" ")[1];
+    } else {
+      query3 = query;
+      query2 = query;
+    }
+
+    productsForSearch = productDataMap.values.where((element) => element.prodChild?.isNotEmpty??false,).where((element) {
+      if( HiveDataBase.getIsNunFree()) {
         return  !(element.prodName?.startsWith("F")??true);
       } else {
         return true;
@@ -130,15 +159,15 @@ class ProductViewModel extends GetxController {
       //bool prodId = item.prodId.toString().toLowerCase().contains(query.toLowerCase());
       return (prodName || prodCode || prodBarcode) && !item.prodIsGroup!;
     }).toList();
-print(productsForSearch.length);
+
     return productsForSearch.toList();
-  }
+  }*/
 
 
 
   void getAllProduct() async {
     if (HiveDataBase.productModelBox.values.isEmpty) {
-      print("THE PRODUCT IS READ FROM FIREBASE");
+
       FirebaseFirestore.instance.collection(Const.productsCollection).get().then((value) async {
         productDataMap.clear();
         for (var element in value.docs) {
@@ -364,7 +393,10 @@ print(productsForSearch.length);
       });
       if (productDataMap[editProductModel.prodParentId]?.prodChild == null) {
         productDataMap[editProductModel.prodParentId]?.prodChild = [editProductModel.prodId];
+        HiveDataBase.productModelBox.put(editProductModel.prodParentId,getProductModelFromId(editProductModel.prodParentId)!..prodChild=[editProductModel.prodId]);
+
       } else {
+        HiveDataBase.productModelBox.put(editProductModel.prodParentId,getProductModelFromId(editProductModel.prodParentId)!..prodChild!.add(editProductModel.prodId));
         productDataMap[editProductModel.prodParentId]?.prodChild?.add(editProductModel.prodId);
       }
       changesViewModel.addChangeToChanges(productDataMap[editProductModel.prodParentId]!.toFullJson(), Const.productsCollection);
@@ -372,6 +404,7 @@ print(productsForSearch.length);
     }
     if (withLogger) logger(newData: editProductModel);
     await FirebaseFirestore.instance.collection(Const.productsCollection).doc(editProductModel.prodId).set(editProductModel.toJson());
+    HiveDataBase.productModelBox.put(editProductModel.prodId,editProductModel);
     changesViewModel.addChangeToChanges(editProductModel.toFullJson(), Const.productsCollection);
     Get.snackbar("فحص المطاييح", ' تم اضافة المطيح');
   }
@@ -414,15 +447,21 @@ print(productsForSearch.length);
       FirebaseFirestore.instance.collection(Const.productsCollection).doc(editProductModel.prodParentId).update({
         'prodChild': FieldValue.arrayUnion([editProductModel.prodId]),
       });
+
       if (productDataMap[editProductModel.prodParentId]?.prodChild == null) {
         productDataMap[editProductModel.prodParentId]?.prodChild = [editProductModel.prodId];
+        HiveDataBase.productModelBox.put(editProductModel.prodParentId,getProductModelFromId(editProductModel.prodParentId)!..prodChild=[editProductModel.prodId]);
+
       } else {
         productDataMap[editProductModel.prodParentId]?.prodChild?.add(editProductModel.prodId);
+        HiveDataBase.productModelBox.put(editProductModel.prodParentId,getProductModelFromId(editProductModel.prodParentId)!..prodChild!.add(editProductModel.prodId));
+
       }
       changesViewModel.addChangeToChanges(productDataMap[editProductModel.prodParentId]!.toFullJson(), Const.productsCollection);
       editProductModel.prodIsParent = false;
     }
     FirebaseFirestore.instance.collection(Const.productsCollection).doc(editProductModel.prodId).update(editProductModel.toJson());
+    HiveDataBase.productModelBox.put(editProductModel.prodId,editProductModel);
 
     changesViewModel.addChangeToChanges(editProductModel.toFullJson(), Const.productsCollection);
     update();
@@ -658,12 +697,12 @@ print(productsForSearch.length);
                 addFolder(nameCon.text, prodParentId: prodParentId);
                 Get.back();
               },
-              child: Text("إضافة")),
+              child: const Text("إضافة")),
           ElevatedButton(
               onPressed: () {
                 Get.back();
               },
-              child: Text("إلغاء")),
+              child: const Text("إلغاء")),
         ]);
   }
 
@@ -698,11 +737,11 @@ String getProductIdFromFullName(name) {
   }
 }
 
-String getProductIdFromName(name) {
+String? getProductIdFromName(name) {
   if (name != null && name != " " && name != "") {
-    return Get.find<ProductViewModel>().productDataMap.values.toList().cast<ProductModel?>().firstWhereOrNull((element) => element?.prodName == name || element?.prodCode == name)?.prodId ?? "";
+    return Get.find<ProductViewModel>().productDataMap.values.toList().cast<ProductModel?>().firstWhereOrNull((element) => element?.prodName == name || element?.prodCode == name)?.prodId ;
   } else {
-    return "";
+    return null;
   }
 }
 
@@ -731,7 +770,6 @@ ProductModel? getProductModelFromName(name) {
 
 String getProductNameFromId(id) {
   if (id != null && id != " " && id != "") {
-    // return id;
     if (Get.find<ProductViewModel>().productDataMap[id] == null) {
       return "";
     }

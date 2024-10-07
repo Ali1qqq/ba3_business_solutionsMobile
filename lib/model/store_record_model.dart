@@ -1,4 +1,3 @@
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 import 'package:ba3_business_solutions/model/product_model.dart';
 
 import '../controller/product_view_model.dart';

@@ -1,3 +1,4 @@
+import 'package:ba3_business_solutions/Dialogs/Account_Option_Dialog.dart';
 import 'package:ba3_business_solutions/controller/pattern_model_view.dart';
 import 'package:ba3_business_solutions/controller/user_management_model.dart';
 import 'package:ba3_business_solutions/view/accounts/account_tree_view.dart';
@@ -7,7 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../Const/const.dart';
-import 'account_view_old.dart';
+import '../../Dialogs/AccountDueOption.dart';
+import '../../Widgets/CustomerPlutoEditView.dart';
+import '../invoices/Controller/Search_View_Controller.dart';
+import 'All_Due_Account.dart';
+import 'PartnerDueAccount.dart';
 
 class AccountType extends StatefulWidget {
   const AccountType({super.key});
@@ -18,6 +23,7 @@ class AccountType extends StatefulWidget {
 
 class _AccountTypeState extends State<AccountType> {
   PatternViewModel patternController = Get.find<PatternViewModel>();
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -29,16 +35,32 @@ class _AccountTypeState extends State<AccountType> {
         body: Column(
           children: [
             item("إنشاء حساب", () {
-              Get.to(() => const AddAccount());
+              Get.to(() => const AddAccount(),binding: BindingsBuilder(
+
+                    () => Get.lazyPut(()=>CustomerPlutoEditViewModel()),
+              ));
             }),
             // item("معاينة الحسابات", () {
             //   checkPermissionForOperation(Const.roleUserRead, Const.roleViewAccount).then((value) {
             //     if (value) Get.to(() => const AllAccountOLD());
             //   });
             // }),
+            item("كشف حساب", () {
+              checkPermissionForOperation(Const.roleUserRead, Const.roleViewAccount).then((value) {
+                if (value) {
+                  Get.find<SearchViewController>().initController();
+                  showDialog<String>(
+                    context: Get.context!,
+                    builder: (BuildContext context) => const AccountOptionDialog(),
+                  );
+                }
+              });
+            }),
             item("معاينة الحسابات", () {
               checkPermissionForOperation(Const.roleUserRead, Const.roleViewAccount).then((value) {
-                if (value) Get.to(() => const AllAccount());
+                if (value) {
+                  Get.to(() => const AllAccount());
+                }
               });
             }),
             item("شجرة الحسابات", () {
@@ -46,7 +68,25 @@ class _AccountTypeState extends State<AccountType> {
                 if (value) Get.to(() => AccountTreeView());
               });
             }),
+            item("سجل استحقاق الشركاء", () {
+              checkPermissionForOperation(Const.roleUserRead, Const.roleViewAccount).then((value) {
+                if (value) Get.to(() => const AllPartnerDueAccount());
+              });
 
+            }),
+            item("المستحقات", () {
+              checkPermissionForOperation(Const.roleUserRead, Const.roleViewAccount).then((value) {
+                if (value) {
+                  Get.find<SearchViewController>().initController();
+                  showDialog<String>(
+                    context: Get.context!,
+                    builder: (BuildContext context) => const AccountDueOptionDialog(),
+                  );
+                }
+              });
+
+
+            }),
           ],
         ),
       ),

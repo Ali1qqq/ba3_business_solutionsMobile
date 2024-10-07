@@ -1,7 +1,10 @@
 import 'package:ba3_business_solutions/controller/user_management_model.dart';
+import 'package:ba3_business_solutions/view/invoices/New_Invoice_View.dart';
 import 'package:ba3_business_solutions/view/user_management/role_management/add_role.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../widget/CustomWindowTitleBar.dart';
 
 class RoleManagementView extends StatelessWidget {
   const RoleManagementView({super.key});
@@ -14,9 +17,11 @@ class RoleManagementView extends StatelessWidget {
         appBar: AppBar(
           title: const Text("إدارة الصلاحيات"),
           actions: [
-            ElevatedButton(onPressed: (){
+
+            AppButton(title: "إضافة",onPressed: (){
               Get.to(()=>const AddRoleView());
-            }, child: const Text("إضافة دور",))
+            }, iconData: Icons.add),
+            const SizedBox(width: 10),
           ],
         ),
         body: GetBuilder<UserManagementViewModel>(

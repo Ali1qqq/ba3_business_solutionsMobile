@@ -120,9 +120,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                                       width: 25,
                                     ),
                                     Expanded(
-                                      child: customTextFieldWithIcon(
-                                        productNameController,
-                                            (text) async {
+                                      child: CustomTextFieldWithIcon(
+                                     controller:    productNameController,
+                                      onSubmitted:       (text) async {
                                           var a = await controller.getComplete(text);
                                           if (a.isNotEmpty) {
                                             taskModel.taskProductId = getProductIdFromName(a);
@@ -130,9 +130,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                                             setState(() {});
                                           }
                                         },
-                                        onChanged: (_) {
-                                          // patternController.editPatternModel?.patPrimary = _;
-                                        },
+
                                       ),
                                     ),
                                     const SizedBox(

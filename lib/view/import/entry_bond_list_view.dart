@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../Const/const.dart';
 import '../../controller/import_view_model.dart';
 import '../../model/bond_record_model.dart';
+import '../../model/entry_bond_record_model.dart';
 import '../../model/global_model.dart';
 
 class EntryBondListView extends StatelessWidget {
@@ -37,10 +38,10 @@ class EntryBondListView extends StatelessWidget {
                   Text(bondList[index].bondId.toString()),
                   Text("المجموع: "+bondList[index].bondTotal.toString()),
                   Text("الوقت: "+bondList[index].bondDate.toString()),
-                  Text("نوع الفاتورة: "+getBondTypeFromEnum(bondList[index].bondType.toString())),
+                  // Text("نوع الفاتورة: "+getBondTypeFromEnum(bondList[index].bondType.toString())),
                   Text("الرمز: "+bondList[index].bondCode.toString()),
-                  Text("الرمز: "+bondList[index].bondType.toString()),
-                  Text("سند قيد: "+bondList[index].originAmenId.toString()),
+                  // Text("الرمز: "+bondList[index].bondType.toString()),
+                  // Text("سند قيد: "+bondList[index].originAmenId.toString()),
                   Text("الوصف: "+bondList[index].bondDescription.toString()),
                 ],
               ),
@@ -74,7 +75,7 @@ class EntryBondListView extends StatelessWidget {
                   ],
                 ),
               ),
-              for(BondRecordModel e in bondList[index].bondRecord??[])
+              for(EntryBondRecordModel e in bondList[index].entryBondRecord??[])
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Row(

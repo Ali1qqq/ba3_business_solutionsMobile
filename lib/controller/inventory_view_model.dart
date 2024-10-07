@@ -10,7 +10,7 @@ import '../model/product_model.dart';
 class InventoryViewModel extends GetxController{
   Map<String , InventoryModel> allInventory = {};
   InventoryViewModel(){
-    FirebaseFirestore.instance.collection(Const.inventoryCollection).get().then((event) {
+    FirebaseFirestore.instance.collection(Const.inventoryCollection).snapshots().listen((event) {
       allInventory.clear();
       for(var i in event.docs){
         allInventory[i.id] = InventoryModel.fromJson(i.data());

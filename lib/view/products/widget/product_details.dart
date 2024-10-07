@@ -1,17 +1,19 @@
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
 import 'package:ba3_business_solutions/controller/user_management_model.dart';
 import 'package:ba3_business_solutions/utils/confirm_delete_dialog.dart';
-import 'package:ba3_business_solutions/view/invoices/invoice_view.dart';
 import 'package:ba3_business_solutions/view/products/widget/add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../Const/const.dart';
+import '../../../Widgets/Discount_Pluto_Edit_View_Model.dart';
+import '../../../Widgets/Invoice_Pluto_Edit_View_Model.dart';
 import '../../../model/global_model.dart';
 import '../../../model/product_model.dart';
 import '../../../model/product_record_model.dart';
 import '../../../utils/hive.dart';
+import '../../invoices/New_Invoice_View.dart';
 
 class ProductDetails extends StatefulWidget {
   final String? oldKey;
@@ -104,7 +106,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     Get.to(() => InvoiceView(
                                           billId: invId,
                                           patternId: '',
-                                        ));
+                                        )
+                                    ,  binding: BindingsBuilder(() {
+                                        Get.lazyPut(() => InvoicePlutoViewModel());
+                                        Get.lazyPut(() => DiscountPlutoViewModel());
+                                      }),);
                                   }
                                 },
                                 source: controller.recordDataSource,

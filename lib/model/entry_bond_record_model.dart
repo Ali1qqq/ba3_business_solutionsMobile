@@ -1,3 +1,5 @@
+import '../controller/account_view_model.dart';
+
 class EntryBondRecordModel {
   String? bondRecId, bondRecAccount, bondRecDescription, invId;
   double? bondRecCreditAmount, bondRecDebitAmount;
@@ -7,8 +9,16 @@ class EntryBondRecordModel {
     bondRecId = json['bondRecId'];
     bondRecAccount = json['bondRecAccount'];
     bondRecDescription = json['bondRecDescription'];
-    bondRecCreditAmount =json['bondRecCreditAmount']==null? 0:double.parse(json['bondRecCreditAmount'].toString());
-    bondRecDebitAmount = double.parse(json['bondRecDebitAmount'].toString());
+    bondRecCreditAmount =double.tryParse(json['bondRecCreditAmount'].toString())?? 0.0;
+    bondRecDebitAmount = double.tryParse(json['bondRecDebitAmount'].toString())?? 0.0;
+    invId = json['invId'];
+  }
+  EntryBondRecordModel.fromPlutoJson(json) {
+    bondRecId = json['bondRecId'];
+    bondRecAccount = getAccountIdFromText(json['bondRecAccount']);
+    bondRecDescription = json['bondRecDescription'];
+    bondRecCreditAmount =double.tryParse(json['bondRecCreditAmount'].toString())?? 0.0;
+    bondRecDebitAmount = double.tryParse(json['bondRecDebitAmount'].toString())?? 0.0;
     invId = json['invId'];
   }
 

@@ -1,27 +1,29 @@
-import 'dart:convert';
-import 'dart:io';
 
+import 'package:ba3_business_solutions/adapter/Warranty_adapter.dart';
 import 'package:ba3_business_solutions/adapter/account_record_model_adapter.dart';
 import 'package:ba3_business_solutions/adapter/global_model_adapter.dart';
 import 'package:ba3_business_solutions/adapter/product_model_adapter.dart';
 import 'package:ba3_business_solutions/adapter/product_record_model_adapter.dart';
 import 'package:ba3_business_solutions/adapter/store_model_adapter.dart';
+import 'package:ba3_business_solutions/model/AccountCustomer.dart';
 import 'package:ba3_business_solutions/model/account_model.dart';
 import 'package:ba3_business_solutions/model/global_model.dart';
 import 'package:ba3_business_solutions/model/inventory_model.dart';
 import 'package:ba3_business_solutions/model/product_model.dart';
-import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
+import '../adapter/Account_Customer_adapter.dart';
 import '../adapter/account_model_adapter.dart';
 import '../adapter/inventory_model_adapter.dart';
+import '../model/Warranty_Model.dart';
 import '../model/store_model.dart';
 
 class HiveDataBase {
   static late Box<GlobalModel> globalModelBox;
   static late Box<ProductModel> productModelBox;
   static late Box<AccountModel> accountModelBox;
+  static late Box<AccountCustomer> accountCustomerBox;
+  static late Box<WarrantyModel> warrantyModelBox;
   static late Box<AccountModel> mainAccountModelBox;
   static late Box<Map> statisticBox;
   static late Box<StoreModel> storeModelBox;
@@ -38,19 +40,23 @@ class HiveDataBase {
 
     // print(directory?.path);
     // if(Platform.isAndroid) {
-      // await Hive.initFlutter("/storage/emulated/0/Android/data/com.ba3business.ba3_business_solutions/files");
+    await Hive.initFlutter("/storage/emulated/0/Android/data/com.ba3business.ba3_business_solutions/files");
     // } else{
-      await Hive.initFlutter();
+    await Hive.initFlutter();
 
     // }
     Hive.registerAdapter(GlobalModelAdapter());
+    Hive.registerAdapter(WarrantyAdapter());
     Hive.registerAdapter(ProductModelAdapter());
+    Hive.registerAdapter(AccountCustomerAdapter());
     Hive.registerAdapter(AccountModelAdapter());
     Hive.registerAdapter(StoreModelAdapter());
     Hive.registerAdapter(AccountRecordAdapter());
     Hive.registerAdapter(ProductRecordModelAdapter());
     Hive.registerAdapter(InventoryModelAdapter());
     productModelBox=await Hive.openBox<ProductModel>("AllProduct");
+    warrantyModelBox=await Hive.openBox<WarrantyModel>("AllWarranty");
+    accountCustomerBox=await Hive.openBox<AccountCustomer>("AllCustomerAccount");
     accountModelBox=await Hive.openBox<AccountModel>("AllAccount");
     storeModelBox=await Hive.openBox<StoreModel>("AllStore");
     lastChangesIndexBox=await Hive.openBox<int>("lastChangesIndex");
@@ -73,13 +79,13 @@ class HiveDataBase {
     if(isFree.get("isFree")==null){
       isFree.put("isFree", false);
     }
-   
+
   }
 
   static String getMyReadFlag(){
     return constBox.get("myReadFlag")!;
   }
-  static bool getIsFree(){
+  static bool getWithFree(){
     return  isFree.get("isFree")??false;
   }
 
@@ -92,7 +98,7 @@ class HiveDataBase {
 
 
   }
-static deleteAllLocal() {
+  static deleteAllLocal() {
     HiveDataBase.globalModelBox.deleteFromDisk();
     HiveDataBase.accountModelBox.deleteFromDisk();
     HiveDataBase.storeModelBox.deleteFromDisk();
@@ -101,6 +107,7 @@ static deleteAllLocal() {
     HiveDataBase.constBox.deleteFromDisk();
     HiveDataBase.isNewUser.deleteFromDisk();
     HiveDataBase.isFree.deleteFromDisk();
+    HiveDataBase.accountCustomerBox.deleteFromDisk();
   }
 
 }

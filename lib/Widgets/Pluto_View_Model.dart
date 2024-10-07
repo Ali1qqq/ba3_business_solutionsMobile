@@ -2,13 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../Const/const.dart';
 
 class PlutoViewModel extends GetxController {
-  // List<PlutoColumn> columns = [];
-  // List<PlutoRow> rows = [];
 
-  // String? idName;
   GlobalKey plutoKey = GlobalKey();
 
   List<PlutoColumn> getColumns(List<dynamic> modelList,{String? type}) {
@@ -28,14 +24,13 @@ class PlutoViewModel extends GetxController {
           hide: sampleData.keys.first == key,
         );
       }).toList();
-      plutoKey = GlobalKey();
     }
+
     return columns;
   }
-
+  List<PlutoRow> rows = [];
   List<PlutoRow> getRows(List<dynamic> modelList, {String? type}) {
     List<PlutoRow> rows = [];
-
     if (modelList.isEmpty) {
       return rows;
     } else {
@@ -52,7 +47,6 @@ class PlutoViewModel extends GetxController {
       }).toList();
       plutoKey = GlobalKey();
     }
-
     return rows;
   }
 

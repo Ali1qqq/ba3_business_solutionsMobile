@@ -97,7 +97,7 @@ class _AddInventoryTaskViewState extends State<AddInventoryTaskView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if(inventoryModel!=null)
-                            Text("تم إضافة جرد يتضمن "+inventoryModel!.inventoryTargetedProductList.length.toString()+" مواد")else
+                            Text("تم إضافة جرد يتضمن ${inventoryModel!.inventoryTargetedProductList.length} مواد")else
                             ElevatedButton(onPressed: () async {
                               if(allUser.isNotEmpty){
                                 InventoryModel? _ = await Get.to(()=>SelectTaskInventory(userId: allUser.first,));

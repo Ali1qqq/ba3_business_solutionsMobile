@@ -1,3 +1,4 @@
+/*
 import 'package:ba3_business_solutions/controller/account_view_model.dart';
 import 'package:ba3_business_solutions/controller/pattern_model_view.dart';
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
@@ -131,4 +132,4 @@ ProductModel? getProductModelFromIdIsolate(id) {
   } else {
     return null;
   }
-}
+}*/

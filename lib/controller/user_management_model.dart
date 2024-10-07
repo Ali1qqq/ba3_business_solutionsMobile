@@ -44,12 +44,14 @@ class UserManagementViewModel extends GetxController {
       allRole.clear();
       for (var element in event.docs) {
         allRole[element.id] = RoleModel.fromJson(element.data());
-        WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) => update(),);
+        // WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) => update(),);
       }
     });
   }
 
   void checkUserStatus() async {
+
+
     if (userPin != null) {
       FirebaseFirestore.instance.collection(Const.usersCollection).where('userPin', isEqualTo: userPin).get().then((value) async {
         if (userPin == null) {
@@ -114,10 +116,11 @@ class UserManagementViewModel extends GetxController {
         Get.offAll(() => const LoginView());
       });
     }
+
   }
 
   void initAllUser() {
-    FirebaseFirestore.instance.collection(Const.usersCollection).get().then((event) {
+    FirebaseFirestore.instance.collection(Const.usersCollection).snapshots().listen((event) {
       allUserList.clear();
       for (var element in event.docs) {
         allUserList[element.id] = UserModel.fromJson(element.data());
@@ -161,6 +164,25 @@ class UserManagementViewModel extends GetxController {
     FirebaseFirestore.instance.collection(Const.usersCollection).doc(userId).set({
       "userStatus": Const.userStatusOnline,
     }, SetOptions(merge: true));
+  }
+  void logInTime() {
+
+    try {
+      FirebaseFirestore.instance.collection(Const.usersCollection).doc(myUserModel!.userId).update({
+        "logInDateList": FieldValue.arrayUnion([Timestamp.now().toDate()]), "userStatus": Const.userStatusOnline,
+      });
+    } on Exception catch (e) {
+     Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  $e \n");
+    }
+  }
+  void logOutTime() {
+    try {
+      FirebaseFirestore.instance.collection(Const.usersCollection).doc(myUserModel!.userId).update({
+        "logOutDateList": FieldValue.arrayUnion([Timestamp.now().toDate()]), "userStatus": Const.userStatusOnline,
+      });
+    } on Exception catch (e) {
+      Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  $e \n");
+    }
   }
 }
 
@@ -273,7 +295,10 @@ Future<bool> checkPermissionForOperation(role, page) async {
                       keyboardType: TextInputType.number,
                       defaultPinTheme: PinTheme(width: 50, height: 50, decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.blue.shade400.withOpacity(0.5))),
                       length: 6,
+                      obscureText: true,
+
                       onCompleted: (_) {
+
                         UserModel? user = userManagementViewController.allUserList.values.toList().firstWhereOrNull((element) => element.userPin == _);
                         if (user != null) {
                           Map<String, List<String>>? newUserRole = userManagementViewController.allRole[user.userRole]?.roles;

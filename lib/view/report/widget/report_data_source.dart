@@ -68,7 +68,7 @@ class ReportDataSource extends DataGridSource {
     } else if (checkIsID("prod",text)) {
       return getProductNameFromId(text);
     } else if (checkIsID("seller",text)) {
-      return getSellerNameFromId(text);
+      return getSellerNameFromId(text)??'';
     } else if (checkIsID("store",text)) {
       return getStoreNameFromId(text);
     } else if (checkIsID("pat",text)) {

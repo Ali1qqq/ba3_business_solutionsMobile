@@ -38,33 +38,25 @@ class _UserManagementTypeState extends State<UserManagementType> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const CustomWindowTitleBar(),
-        
-        Expanded(
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text("الإدارة"),
-              ),
-              body: !isAdmin
-              ?const Center(child: Text("غير مصرح لك بالدخول"),)
-              :Column(
-                children: [
-                  item("إدارة المستخدمين",(){
-                    Get.to(() => AllUserView());
-                  }),
-                  item("إدارة الصلاحيات",(){
-                    Get.to(()=>RoleManagementView());
-                  }),
-                ],
-              ),
-            ),
-          ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("الإدارة"),
         ),
-      ],
+        body: !isAdmin
+        ?const Center(child: Text("غير مصرح لك بالدخول"),)
+        :Column(
+          children: [
+            item("إدارة المستخدمين",(){
+              Get.to(() => const AllUserView());
+            }),
+            item("إدارة الصلاحيات",(){
+              Get.to(()=>const RoleManagementView());
+            }),
+          ],
+        ),
+      ),
     );
   }
 

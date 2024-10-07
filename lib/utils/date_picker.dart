@@ -1,3 +1,4 @@
+import 'package:ba3_business_solutions/Const/const.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,11 +17,11 @@ class DatePicker extends StatefulWidget {
 class _DatePickerState extends State<DatePicker> {
   @override
   Widget build(BuildContext context) {
-    DateTime? _date;
+    DateTime? date;
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all()),
-      width: 150,
-      height: 40,
+      height: Const.constHeightTextField,
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: const Border.symmetric(vertical: BorderSide(width: 1))),
+      // width: 150,
       child: InkWell(
           onTap: () {
             Get.defaultDialog(
@@ -32,7 +33,7 @@ class _DatePickerState extends State<DatePicker> {
                     initialDisplayDate: DateTime.tryParse(widget.initDate ?? ""),
                     enableMultiView: true,
                     backgroundColor: Colors.transparent,
-                    headerStyle: DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
+                    headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
                     navigationDirection: DateRangePickerNavigationDirection.vertical,
                     selectionMode: DateRangePickerSelectionMode.single,
                     monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
@@ -40,15 +41,15 @@ class _DatePickerState extends State<DatePicker> {
                     navigationMode: DateRangePickerNavigationMode.scroll,
                     onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
                       DateTime _ = dateRangePickerSelectionChangedArgs.value as DateTime;
-                      _date = _;
+                      date = _;
                     },
                   ),
                 ),
                 actions: [
                   ElevatedButton(
                       onPressed: () {
-                        if (_date != null) {
-                          widget.onSubmit(_date!);
+                        if (date != null) {
+                          widget.onSubmit(date!);
                         }
                         Get.back();
                         setState(() {});
@@ -64,14 +65,16 @@ class _DatePickerState extends State<DatePicker> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Spacer(),
                 Text(widget.initDate != null
                     ? widget.initDate.toString().split(" ").first
-                    : _date == null
+                    : date == null
                         ? "اختر يوم"
-                        : _date.toString().split(" ").first),
-                Spacer(),
-                Icon(Icons.date_range)
+                        : date.toString().split(" ").first,style: const TextStyle(fontSize: 17),),
+                const Spacer(),
+                const Icon(Icons.date_range)
               ],
             ),
           )),

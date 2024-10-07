@@ -1,5 +1,6 @@
-
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
+import 'package:ba3_business_solutions/model/Warranty_Model.dart';
+import 'package:ba3_business_solutions/model/Warranty_record_model.dart';
 import 'package:ba3_business_solutions/model/global_model.dart';
 import 'package:ba3_business_solutions/model/invoice_record_model.dart';
 import 'package:ba3_business_solutions/model/product_model.dart';
@@ -7,44 +8,53 @@ import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:get/get.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
-class PrintViewModel extends GetxController{
-
-
-
-   Future<void> printFunction(GlobalModel globalModel) async {
+class PrintViewModel extends GetxController {
+  Future<void> printFunction(GlobalModel globalModel, {WarrantyModel? warrantyModel}) async {
     List<BluetoothInfo> allBluetooth = await getBluetoots();
-    print(allBluetooth.map((e) => "${e.name}   ${e.macAdress}",));
-    if(allBluetooth.map((e) => e.macAdress,).toList().contains("66:32:8D:F3:FF:7E")){
-       if(!connected) {
-       await connect("66:32:8D:F3:FF:7E");
+
+    if (allBluetooth
+        .map(
+          (e) => e.macAdress,
+    )
+        .toList()
+        .contains("66:32:8D:F3:FF:7E")) {
+      if (!connected) {
+        await connect("66:32:8D:F3:FF:7E");
       }
-      await printTest(globalModel);
+      if (warrantyModel != null) {
+        await printTest(GlobalModel(),warranty: warrantyModel);
+      } else {
+        await printTest(globalModel);
+      }
       //await disconnect();
-    } else if (allBluetooth.map((e) => e.macAdress,).toList().contains("66:32:8d:f3:ff:7e")){
-      if(!connected) {
+    } else if (allBluetooth
+        .map(
+          (e) => e.macAdress,
+    )
+        .toList()
+        .contains("66:32:8d:f3:ff:7e")) {
+      if (!connected) {
         await connect("66:32:8d:f3:ff:7e");
       }
-      await printTest(globalModel);
+      if (warrantyModel != null) {
+        await printTest(GlobalModel(),warranty: warrantyModel);
+      } else {
+        await printTest(globalModel);
+      }
       //await disconnect();
-    }else{
+    } else {
       print("Cant find the printer");
     }
   }
 
- // String _info = "";
-  String _msj = '';
+  // String _info = "";
+  //  String _msj = '';
   bool connected = false;
   List<BluetoothInfo> items = [];
 
-  bool _progress = false;
-  String _msjprogress = "";
-
-    
   Future<List<BluetoothInfo>> getBluetoots() async {
     // setState(() {
-      _progress = true;
-      _msjprogress = "Wait";
-      items = [];
+    items = [];
     // });
     final List<BluetoothInfo> listResult = await PrintBluetoothThermal.pairedBluetooths;
 
@@ -54,79 +64,70 @@ class PrintViewModel extends GetxController{
     });*/
 
     // setState(() {
-      _progress = false;
     // });
 
-    if (listResult.length == 0) {
-      _msj = "There are no bluetoohs linked, go to settings and link the printer";
+    if (listResult.isEmpty) {
+      // _msj = "There are no bluetoohs linked, go to settings and link the printer";
     } else {
-      _msj = "Touch an item in the list to connect";
+      // _msj = "Touch an item in the list to connect";
     }
 
     // setState(() {
-      items = listResult;
+    items = listResult;
     // });
     return items;
   }
 
   Future<void> connect(String mac) async {
     // setState(() {
-      _progress = true;
-      _msjprogress = "Connecting...";
-      connected = false;
+    connected = false;
     // });
     final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: mac);
     print("state conected $result");
     if (result) connected = true;
     // setState(() {
-      _progress = false;
     // });
   }
 
   Future<void> disconnect() async {
     final bool status = await PrintBluetoothThermal.disconnect;
     // setState(() {
-      connected = false;
+    connected = false;
     // });
     print("status disconnect $status");
   }
 
-  Future<void> printTest(GlobalModel globalModel) async {
-    /*if (kDebugMode) {
+  Future<void> printTest(GlobalModel globalModel, {WarrantyModel? warranty}) async {
+    /*
+    if (kDebugMode) {
       bool result = await PrintBluetoothThermalWindows.writeBytes(bytes: "Hello \n".codeUnits);
       return;
-    }*/
+    }
+     */
 
     bool conexionStatus = await PrintBluetoothThermal.connectionStatus;
-    //print("connection status: $conexionStatus");
+
     if (conexionStatus) {
       bool result = false;
-      List<int> ticket = await testText(globalModel);
+      if (warranty != null) {
+        List<int> ticket = await testTextWarranty(warranty!);
         result = await PrintBluetoothThermal.writeBytes(ticket);
-      // if (Platform.isWindows) {
-      //   //List<int> ticket = await testWindows();
-      //   // result = await PrintBluetoothThermalWindows.writeBytes(bytes: ticket);
-        
-      // } else {
-      //   // List<int> ticket = await testImage();
-      //   List<int> ticket = await testText(globalModel);
-      //   result = await PrintBluetoothThermal.writeBytes(ticket);
-      // }
+      } else {
+        List<int> ticket = await testText(globalModel);
+        result = await PrintBluetoothThermal.writeBytes(ticket);
+      }
+
       print("print test result:  $result");
     } else {
       disconnect();
       print("print test conexionStatus: $conexionStatus");
-      // setState(() {
-       // disconnect();
-      // });
-      //throw Exception("Not device connected");
     }
   }
 
-    Future<List<int>> testImage() async {
+  Future<List<int>> testImage() async {
     List<int> bytes = [];
     final profile = await CapabilityProfile.load();
-    final generator = Generator( PaperSize.mm58 , profile);
+    final generator = Generator(PaperSize.mm58, profile);
     bytes += generator.reset();
     // Uint8List? a = await Utils.capture(aKey);
     // bytes += generator.imageRaster(img.decodeImage(a!)!);
@@ -138,67 +139,54 @@ class PrintViewModel extends GetxController{
     List<int> bytes = [];
     // Using default profile
     final profile = await CapabilityProfile.load();
-    final generator = Generator( PaperSize.mm58 , profile);
+    final generator = Generator(PaperSize.mm58, profile);
     //bytes += generator.setGlobalFont(PosFontType.fontA);
     bytes += generator.reset();
 
-    bytes += generator.text('Tax Invoice', styles: PosStyles(align: PosAlign.center),linesAfter: 1);
-
+    bytes += generator.text('Tax Invoice', styles: PosStyles(align: PosAlign.center), linesAfter: 1);
 
     // final ByteData data = await rootBundle.load('assets/logo.jpg');
     // final Uint8List bytesImg = data.buffer.asUint8List();
     // img.Image? image = img.decodeImage(bytesImg);
-   // bytes += generator.imageRaster(image!);
+    // bytes += generator.imageRaster(image!);
 
-
-    bytes += generator.text("Burj AlArab Mobile Phone", styles: PosStyles(align: PosAlign.center,bold: true));
-    bytes += generator.text("Date: "+globalModel.invDate.toString(), styles: PosStyles(align: PosAlign.left));
-    bytes += generator.text("IN NO: "+globalModel.invId.toString(), styles: PosStyles(align: PosAlign.left));
-    bytes += generator.text("TRN: 10036 93114 00003", styles: PosStyles(align: PosAlign.left),linesAfter: 1);
-    double total =0;
-    double natTotal =0;
-    double vatTotal =0;
-    for(InvoiceRecordModel model in globalModel.invRecords??[]){
-     
+    bytes += generator.text("Burj AlArab Mobile Phone", styles: PosStyles(align: PosAlign.center, bold: true));
+    bytes += generator.text("Date: " + globalModel.invDate.toString(), styles: PosStyles(align: PosAlign.left));
+    bytes += generator.text("IN NO: " + globalModel.invId.toString(), styles: PosStyles(align: PosAlign.left));
+    bytes += generator.text("TRN: 10036 93114 00003", styles: PosStyles(align: PosAlign.left), linesAfter: 1);
+    double total = 0;
+    double natTotal = 0;
+    double vatTotal = 0;
+    for (InvoiceRecordModel model in globalModel.invRecords ?? []) {
       double modelSubTotalWithVat = model.invRecTotal! / model.invRecQuantity!;
-      double modelSubVatTotal = modelSubTotalWithVat - (modelSubTotalWithVat /1.05);
-      double modelSubTotal = modelSubTotalWithVat /1.05;
+      double modelSubVatTotal = modelSubTotalWithVat - (modelSubTotalWithVat / 1.05);
+      double modelSubTotal = modelSubTotalWithVat / 1.05;
 
-      ProductModel productModel = getProductModelFromId(model.invRecProduct)!;   
-      String text =await checkArabicWithTranslate(productModel.prodName!);
-      bytes += generator.text (text.length<64?text:text.substring(0,64), styles: PosStyles(align: PosAlign.left));
-      bytes += generator.text (productModel.prodBarcode??"", styles: PosStyles(align: PosAlign.left));
+      ProductModel productModel = getProductModelFromId(model.invRecProduct)!;
+      String text = checkArabicWithTranslate(productModel.prodName!);
+      bytes += generator.text(text.length < 64 ? text : text.substring(0, 64), styles: PosStyles(align: PosAlign.left));
+      bytes += generator.text(productModel.prodBarcode ?? "", styles: PosStyles(align: PosAlign.left));
       double totalOfLine = model.invRecTotal!;
-      total = totalOfLine +total;
+      total = totalOfLine + total;
       // natTotal = model.invRecQuantity!* (model.invRecSubTotal!) +natTotal;
       // vatTotal = model.invRecQuantity!* (model.invRecSubTotal!)*0.05 +vatTotal;
-       natTotal = model.invRecQuantity!* modelSubTotal +natTotal;
-      vatTotal = model.invRecQuantity!*modelSubVatTotal +vatTotal;
-      bytes += generator.text(
-        model.invRecQuantity.toString()+
-        ' X '+ 
-        modelSubTotalWithVat.toStringAsFixed(2)
-       // ((model.invRecSubTotal!+((model.invRecSubTotal!))*0.05)).toStringAsFixed(2)
-        +' -> Total:'+totalOfLine.toStringAsFixed(2)
-        
-        
-        , styles: PosStyles(align: PosAlign.left),linesAfter: 1);
+      natTotal = model.invRecQuantity! * modelSubTotal + natTotal;
+      vatTotal = model.invRecQuantity! * modelSubVatTotal + vatTotal;
+      bytes += generator.text('${model.invRecQuantity} X ${modelSubTotalWithVat.toStringAsFixed(2)} -> Total:${totalOfLine.toStringAsFixed(2)}', styles: const PosStyles(align: PosAlign.left), linesAfter: 1);
     }
 
-    bytes += generator.text('Total VAT: '+vatTotal.toStringAsFixed(2), styles: PosStyles(align: PosAlign.center));
-    bytes += generator.text('-'*30, styles: PosStyles(align: PosAlign.right));
-
-
+    bytes += generator.text('Total VAT: ${vatTotal.toStringAsFixed(2)}', styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text('-' * 30, styles: const PosStyles(align: PosAlign.right));
 
     // bytes += generator.text('Sub: '+total.toStringAsFixed(2), styles: PosStyles(align: PosAlign.right));
     // bytes += generator.text('VAT: '+(globalModel.invTotal!-total).toStringAsFixed(2), styles: PosStyles(align: PosAlign.right));
     // bytes += generator.text('Total: '+globalModel.invTotal.toString(), styles: PosStyles(align: PosAlign.right,bold: true));
-    bytes += generator.text('Sub: '+natTotal.toStringAsFixed(2)+" AED", styles: PosStyles(align: PosAlign.right,bold: true));
-    bytes += generator.text('VAT: '+vatTotal.toStringAsFixed(2)+" AED", styles: PosStyles(align: PosAlign.right,bold: true));
-    bytes += generator.text('Total: '+(natTotal+vatTotal).toStringAsFixed(2)+" AED", styles: PosStyles(align: PosAlign.right,bold: true));
-    bytes += generator.text("UAE, Rak, Sadaf Roundabout", styles: PosStyles(align: PosAlign.center));
-    bytes += generator.text("0568666411", styles: PosStyles(align: PosAlign.center));
-    bytes += generator.text("Thanks For Visiting BA3", styles: PosStyles(align: PosAlign.center,bold: true));
+    bytes += generator.text('Sub: ' + natTotal.toStringAsFixed(2) + " AED", styles: const PosStyles(align: PosAlign.right, bold: true));
+    bytes += generator.text('VAT: ' + vatTotal.toStringAsFixed(2) + " AED", styles: const PosStyles(align: PosAlign.right, bold: true));
+    bytes += generator.text('Total: ' + (natTotal + vatTotal).toStringAsFixed(2) + " AED", styles: const PosStyles(align: PosAlign.right, bold: true));
+    bytes += generator.text("UAE, Rak, Sadaf Roundabout", styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text("0568666411", styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text("Thanks For Visiting BA3", styles: const PosStyles(align: PosAlign.center, bold: true));
     // final file = base64Encode(a!.toList());
     // print(a.length);
     // bytes +=  generator.image(decodeImage(a)!);
@@ -269,8 +257,37 @@ class PrintViewModel extends GetxController{
     return bytes;
   }
 
+  Future<List<int>> testTextWarranty(WarrantyModel globalModel) async {
+    List<int> bytes = [];
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm58, profile);
+    bytes += generator.reset();
 
- double computeWithoutVatTotal(records) {
+    bytes += generator.text('Warranty Invoice', styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
+
+    bytes += generator.text("Burj AlArab Mobile Phone", styles: const PosStyles(align: PosAlign.center, bold: true));
+    bytes += generator.text("Date: ${globalModel.invDate}", styles: const PosStyles(align: PosAlign.left));
+    bytes += generator.text("IN NO: ${globalModel.invId}", styles: const PosStyles(align: PosAlign.left));
+
+    for (WarrantyRecordModel model in globalModel.invRecords ?? []) {
+      ProductModel productModel = getProductModelFromId(model.invRecProduct)!;
+      String text = checkArabicWithTranslate(productModel.prodName!);
+      bytes += generator.text(text.length < 64 ? text : text.substring(0, 64), styles: PosStyles(align: PosAlign.left));
+      bytes += generator.text(productModel.prodBarcode ?? "", styles: PosStyles(align: PosAlign.left));
+    }
+
+    bytes += generator.text('-' * 30, styles: const PosStyles(align: PosAlign.right));
+
+    bytes += generator.text("UAE, Rak, Sadaf Roundabout", styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text("0568666411", styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text("Thanks For Visiting BA3", styles: const PosStyles(align: PosAlign.center, bold: true));
+
+    bytes += generator.feed(2);
+
+    return bytes;
+  }
+
+  double computeWithoutVatTotal(records) {
     int quantity = 0;
     double subtotals = 0.0;
     double total = 0.0;
@@ -284,7 +301,6 @@ class PrintViewModel extends GetxController{
     return total;
   }
 
-  
   double computeAllTotal(records) {
     int quantity = 0;
     double subtotals = 0.0;
@@ -310,50 +326,50 @@ class PrintViewModel extends GetxController{
     }
     return total;
   }
-String checkArabicWithTranslate(String data)  {
-  bool isArabic = false;
-  for (var c in data.codeUnits) {
-    if (c >= 0x0600 && c <= 0x06E0) {
-      isArabic =  true;
+
+  String checkArabicWithTranslate(String data) {
+    bool isArabic = false;
+    for (var c in data.codeUnits) {
+      if (c >= 0x0600 && c <= 0x06E0) {
+        isArabic = true;
+      }
+    }
+    if (isArabic) {
+      String _ = data
+          .replaceAll("ا", "a")
+          .replaceAll("ب", "b")
+          .replaceAll("ت", "t")
+          .replaceAll("ث", "th")
+          .replaceAll("ج", "g")
+          .replaceAll("ح", "h")
+          .replaceAll("خ", "kh")
+          .replaceAll("د", "d")
+          .replaceAll("ذ", "th")
+          .replaceAll("ر", "r")
+          .replaceAll("ز", "z")
+          .replaceAll("س", "s")
+          .replaceAll("ش", "sh")
+          .replaceAll("ص", "s")
+          .replaceAll("ض", "d")
+          .replaceAll("ط", "t")
+          .replaceAll("ظ", "Z")
+          .replaceAll("ع", "a")
+          .replaceAll("غ", "gh")
+          .replaceAll("ف", "ph")
+          .replaceAll("ق", "k")
+          .replaceAll("ك", "k")
+          .replaceAll("ل", "l")
+          .replaceAll("م", "m")
+          .replaceAll("ن", "n")
+          .replaceAll("ه", "h")
+          .replaceAll("و", "w")
+          .replaceAll("ي", "e")
+          .replaceAll("ة", "a");
+      print(_);
+      print(data + "  " + _);
+      return _;
+    } else {
+      return data;
     }
   }
-  if(isArabic){
-        String _ = data
-      .replaceAll("ا","a")
-      .replaceAll("ب","b")
-      .replaceAll("ت","t")
-      .replaceAll("ث","th")
-      .replaceAll("ج","g")
-      .replaceAll("ح","h")
-      .replaceAll("خ","kh")
-      .replaceAll("د","d")
-      .replaceAll("ذ","th")
-      .replaceAll("ر","r")
-      .replaceAll("ز","z")
-      .replaceAll("س","s")
-      .replaceAll("ش","sh")
-      .replaceAll("ص","s")
-      .replaceAll("ض","d")
-      .replaceAll("ط","t")
-      .replaceAll("ظ","Z")
-      .replaceAll("ع","a")
-      .replaceAll("غ","gh")
-      .replaceAll("ف","ph")
-      .replaceAll("ق","k")
-      .replaceAll("ك","k")
-      .replaceAll("ل","l")
-      .replaceAll("م","m")
-      .replaceAll("ن","n")
-      .replaceAll("ه","h")
-      .replaceAll("و","w")
-      .replaceAll("ي","e")
-      .replaceAll("ة","a")
-      ;
-      print(_);
-      print(data+"  "+_);
-      return _;
-  }else{
-    return data;
-  }
-}
 }

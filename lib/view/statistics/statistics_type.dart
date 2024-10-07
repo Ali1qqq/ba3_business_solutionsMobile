@@ -51,7 +51,7 @@ class _StatisticsTypeState extends State<StatisticsType> {
                                     textDirection: TextDirection.rtl,
                                     decoration: InputDecoration(hintText: "اكتب اسم الحساب او رقمه",hintTextDirection: TextDirection.rtl),
                                     onChanged: (_){
-                                      accountList = getAccountModelFromName(_);
+                                      accountList = getAccountModelsFromName(_);
                                       print(accountList);
                                       setstate(() {});
                                     },

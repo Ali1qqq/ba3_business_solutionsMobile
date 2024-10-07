@@ -146,7 +146,7 @@ class CustomBondRecordDataSource extends DataGridSource {
                         var accId = accountController.accountList.values.toList().firstWhere((e) => e.accName == result[index]).accId;
                         // bondController.tempBondModel.bondRecord?[dataRowIndex].bondRecAccount=accId;
                         bondController.tempBondModel.bondRecord?.firstWhere((element) => element.bondRecId == rows[dataRowIndex].getCells()[0].value).bondRecAccount = accId;
-                        bondController.initPage(bondController.tempBondModel.bondType);
+                        // bondController.initPage(bondController.tempBondModel.bondType);
                         bondController.update();
                         Get.back();
                       },

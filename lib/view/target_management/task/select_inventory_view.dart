@@ -1,23 +1,18 @@
 
 
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 import 'package:ba3_business_solutions/controller/user_management_model.dart';
 import 'package:ba3_business_solutions/utils/generate_id.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tree_pro/flutter_tree.dart';
 import 'package:get/get.dart';
 
-import '../../../controller/product_view_model.dart';
 import '../../../model/inventory_model.dart';
-import '../../../model/product_model.dart';
-import '../../../utils/hive.dart';
 
 
 
 class SelectTaskInventory extends StatefulWidget {
    final  String userId;
-  SelectTaskInventory({Key? key, required this.userId}) : super(key: key);
+  const SelectTaskInventory({Key? key, required this.userId}) : super(key: key);
 
 
   @override
@@ -31,11 +26,11 @@ class _SelectTaskInventoryState extends State<SelectTaskInventory> {
 
   @override
   void initState() {
-    loadData();
+    // loadData();
     super.initState();
   }
 
-  loadData() async {
+/*  loadData() async {
 
     IsolateViewModel isolateViewModel = Get.find<IsolateViewModel>();
     isolateViewModel.init();
@@ -61,14 +56,14 @@ class _SelectTaskInventoryState extends State<SelectTaskInventory> {
       }
      return (initialTreeData:initialTreeData,treeListData:treeListData);
     }, (
-    a:HiveDataBase.inventoryModelBox.get("0")?.inventoryTargetedProductList??[],
-    isolateViewModel:isolateViewModel)).then((value) {
+    *//*a:HiveDataBase.inventoryModelBox.get("0")?.inventoryTargetedProductList??[],
+    isolateViewModel:isolateViewModel)*//*).then((value) {
 
       treeListData=value.treeListData ;
       print(treeListData.length);
       setState(() { });
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +80,7 @@ class _SelectTaskInventoryState extends State<SelectTaskInventory> {
                   inventoryName: "جرد باسم: "+getUserNameById(widget.userId),
                   inventoryDate: DateTime.now().toString().split(".")[0],
                   inventoryRecord: {},
-                  inventoryTargetedProductList: allData,
+                  inventoryTargetedProductList: {},
                   inventoryUserId: widget.userId,
               );
               Get.back(result: _);
@@ -115,7 +110,7 @@ class _SelectTaskInventoryState extends State<SelectTaskInventory> {
                   addChild(checkedList);
                 },
               )
-                  : Center(child: CircularProgressIndicator()))
+                  : const Center(child: CircularProgressIndicator()))
             ],
           ),
         ),

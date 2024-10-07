@@ -3,7 +3,6 @@ import 'package:ba3_business_solutions/controller/entry_bond_view_model.dart';
 import 'package:ba3_business_solutions/model/cheque_rec_model.dart';
 import 'package:ba3_business_solutions/model/entry_bond_record_model.dart';
 import 'package:ba3_business_solutions/model/global_model.dart';
-import 'package:ba3_business_solutions/utils/logger.dart';
 import 'package:ba3_business_solutions/view/cheques/widget/all_cheques_view_data_grid_source.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class ChequeViewModel extends GetxController {
   }
 
   void getAllCheques() async {
- /*   FirebaseFirestore.instance.collection(Const.chequesCollection).snapshots().listen((value) async {
+/*    FirebaseFirestore.instance.collection(Const.chequesCollection).get().then((value) async {
       print("Listen from fire base Get all cheques");
       allCheques.clear();
       for (var element in value.docs) {
@@ -55,98 +54,41 @@ class ChequeViewModel extends GetxController {
   }
   ///checked
   void initGlobalCheque(GlobalModel globalModel) {
-    if (allCheques.containsKey(globalModel.cheqId)) {
+/*    if (allCheques.containsKey(globalModel.cheqId)) {
       allCheques[globalModel.cheqId]?.cheqRecords?.forEach((element) {
         if (entryBondController.allEntryBonds.containsKey(element.cheqRecEntryBondId)) {
           entryBondController.allEntryBonds.remove(element.cheqRecEntryBondId);
         }
       });
-    }
+    }*/
     allCheques[globalModel.cheqId!] = globalModel;
-    globalModel.cheqRecords?.forEach((element) {
-      // bondController.fastAddBondAddToModel(bondId: element.cheqRecBondId, originId: globalModel.cheqId!, total: double.parse(globalModel.cheqAllAmount!),bondType: Const.bondTypeInvoice,  record: [
-      //   BondRecordModel("00", double.parse(element.cheqRecAmount!), 0, globalModel.cheqType == Const.chequeTypeCatch ? element.cheqRecPrimeryAccount! : element.cheqRecSecoundryAccount!, "تم التوليد من الشيكات", invId: globalModel.cheqId),
-      //   BondRecordModel("01", 0, double.parse(element.cheqRecAmount!), globalModel.cheqType == Const.chequeTypeCatch ? element.cheqRecSecoundryAccount! : element.cheqRecPrimeryAccount!, "تم التوليد من الشيكات", invId: globalModel.cheqId),
-      // ]);
-      accountController.addAccountRecord(
-          bondId: element.cheqRecEntryBondId,
-          accountId: element.cheqRecPrimeryAccount,
-          amount: globalModel.cheqType == Const.chequeTypeCatch ? (-double.parse(element.cheqRecAmount!)).toString() : element.cheqRecAmount,
-          type: globalModel.cheqType,
-          date: globalModel.cheqDate);
-      accountController.addAccountRecord(
-          bondId: element.cheqRecEntryBondId,
-          accountId: element.cheqRecSecoundryAccount,
-          amount: globalModel.cheqType == Const.chequeTypeCatch ? element.cheqRecAmount : (-double.parse(element.cheqRecAmount!)).toString(),
-          type: globalModel.cheqType,
-          date: globalModel.cheqDate);
-    });
-    initChequeViewPage();
   }
 
   ///checked
   deleteGlobalCheque(GlobalModel globalModel) async {
     allCheques.removeWhere((key, value) => key == globalModel.cheqId);
-    globalModel.cheqRecords?.forEach((element) {
-      entryBondController.deleteBondById(element.cheqRecEntryBondId);
-      accountController.deleteAccountRecordById(element.cheqRecEntryBondId, element.cheqRecPrimeryAccount);
-      accountController.deleteAccountRecordById(element.cheqRecEntryBondId, element.cheqRecSecoundryAccount);
-    });
+    // globalModel.cheqRecords?.forEach((element) {
+    //   entryBondController.deleteBondById(element.cheqRecEntryBondId);
+    //   accountController.deleteAccountRecordById(element.cheqRecEntryBondId, element.cheqRecPrimeryAccount);
+    //   accountController.deleteAccountRecordById(element.cheqRecEntryBondId, element.cheqRecSecoundryAccount);
+    // });
     initChequeViewPage();
     update();
   }
 
   ///checked
-  addCheque({String? oldId, String? oldEntryBondId}) async {
-    if (oldId != null) {
-      initModel?.cheqId = oldId;
-    } else {
-      initModel?.cheqId = generateId(RecordType.cheque);
-    }
-    initModel?.cheqRemainingAmount = initModel?.cheqAllAmount;
-    if (!initModel!.cheqPrimeryAccount!.contains("acc")) initModel!.cheqPrimeryAccount = getAccountIdFromText(initModel!.cheqPrimeryAccount);
-    if (!initModel!.cheqSecoundryAccount!.contains("acc")) initModel!.cheqSecoundryAccount = getAccountIdFromText(initModel!.cheqSecoundryAccount);
-    if (!initModel!.cheqBankAccount!.contains("acc")) initModel!.cheqBankAccount = getAccountIdFromText(initModel!.cheqBankAccount);
-    initModel?.cheqStatus = Const.chequeStatusNotPaid;
-    ///////
-    await FirebaseFirestore.instance.collection(Const.chequesCollection).doc(initModel?.cheqId).set(initModel!.toJson());
-    var entryBond = oldEntryBondId ?? generateId(RecordType.entryBond);
-
-    entryBondController.fastAddBondAddToModel(
-        globalModel: GlobalModel(
-          entryBondId: entryBond,
-          originId: initModel!.cheqId!,
-          cheqAllAmount: initModel!.cheqAllAmount,
-          bondType: Const.bondTypeInvoice,
-        ),
-        record: [
-          EntryBondRecordModel("00", double.parse(initModel!.cheqAllAmount!), 0, initModel?.cheqType == Const.chequeTypeCatch ? initModel!.cheqPrimeryAccount! : initModel!.cheqSecoundryAccount!, "تم التوليد من الشيكات", invId: initModel?.cheqId),
-          EntryBondRecordModel("01", 0, double.parse(initModel!.cheqAllAmount!), initModel?.cheqType == Const.chequeTypeCatch ? initModel!.cheqSecoundryAccount! : initModel!.cheqPrimeryAccount!, "تم التوليد من الشيكات", invId: initModel?.cheqId),
-        ]);
-    ChequeRecModel recMap = ChequeRecModel(
-      cheqRecEntryBondId: entryBond,
-      cheqRecAmount: initModel!.cheqAllAmount!,
-      cheqRecType: Const.chequeRecTypeInit,
-      cheqRecId: initModel?.cheqId,
-      cheqRecChequeType: initModel?.cheqType,
-      cheqRecPrimeryAccount: initModel!.cheqPrimeryAccount,
-      cheqRecSecoundryAccount: initModel!.cheqSecoundryAccount,
-    );
-    // var recMap = {
-    //   "cheqRecBondId": bondId,
-    //   "cheqRecType": Const.chequeRecTypeInit,
-    // };
-
-    initModel?.cheqRecords?.add(ChequeRecModel.fromJson(recMap.toJson()));
-    var globalController = Get.find<GlobalViewModel>();
-
-    globalController.addGlobalCheque(initModel!);
-    ///TODO:ali
-    FirebaseFirestore.instance.collection(Const.chequesCollection).doc(initModel?.cheqId).collection(Const.recordCollection).doc(initModel?.bondId).set(recMap.toJson());
+  addCheque(GlobalModel globalModel) async {
+    print(globalModel.toFullJson());
+    await FirebaseFirestore.instance.collection(Const.chequesCollection).doc(globalModel.cheqId).set(globalModel.toFullJson());
+    entryBondController.allEntryBonds[globalModel.entryBondId!]=globalModel;
+    allCheques[globalModel.cheqId!]=globalModel;
+    // GlobalViewModel globalController = Get.find<GlobalViewModel>();
+    // globalController.addGlobalCheque(globalModel);
+    initModel=globalModel;
     update();
   }
 
-  Future<void> updateCheque({withLogger = false}) async {
+/*  Future<void> updateCheque(GlobalModel globalModel) async {
     await deleteGlobalCheque(initModel!).then((value) async {
       if (!initModel!.cheqPrimeryAccount!.contains("acc")) initModel!.cheqPrimeryAccount = getAccountIdFromText(initModel!.cheqPrimeryAccount);
       if (!initModel!.cheqSecoundryAccount!.contains("acc")) initModel!.cheqSecoundryAccount = getAccountIdFromText(initModel!.cheqSecoundryAccount);
@@ -154,7 +96,7 @@ class ChequeViewModel extends GetxController {
       await FirebaseFirestore.instance.collection(Const.chequesCollection).doc(initModel?.cheqId).delete();
       var initBond = initModel!.cheqRecords?.where((element) => element.cheqRecType == Const.chequeRecTypeInit).first;
       initModel!.cheqRecords?.remove(initBond);
-      await addCheque(oldId: initModel?.cheqId, oldEntryBondId: initBond?.cheqRecEntryBondId);
+      // await addCheque(oldId: initModel?.cheqId, oldEntryBondId: initBond?.cheqRecEntryBondId);
       initModel!.cheqRecords?.forEach((element) {
         if (element.cheqRecType == Const.chequeRecTypeAllPayment) {
           payAllAmount(oldEntryBondId: element.cheqRecEntryBondId, ispayEdit: true);
@@ -169,7 +111,7 @@ class ChequeViewModel extends GetxController {
       initChequeViewPage();
       update();
     });
-  }
+  }*/
   // Future<void> deleteCheque({withLogger = false}) async {
   //   var id = initModel?.cheqId;
   //   if (withLogger) logger(oldData: allCheques[id]!);

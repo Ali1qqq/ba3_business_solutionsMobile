@@ -1,12 +1,19 @@
+import 'Seller_Time_Model.dart';
+
 class SellerModel {
   String? sellerName, sellerCode, sellerId;
   List<SellerRecModel>? sellerRecord = [];
   Map<String , SellerTargetArchive> sellerTargetArchive= {};
+  List<String>? sellerDayOff=[];
+  SellerTimeModel? sellerTime;
+
   SellerModel({
     this.sellerName,
     this.sellerCode,
     this.sellerId,
     this.sellerRecord,
+    this.sellerTime,
+    this.sellerDayOff,
   });
 
   Map<String, dynamic> toJson() {
@@ -14,12 +21,18 @@ class SellerModel {
       'sellerName': sellerName,
       'sellerCode': sellerCode,
       'sellerId': sellerId,
+      'sellerTime': sellerTime?.toJson(),
+      'sellerDayOff': sellerDayOff?.toList(),
     };
   }
 
   SellerModel.fromJson(Map<String, dynamic> json, this.sellerId) {
     sellerName = json['sellerName'];
     sellerCode = json['sellerCode'];
+    sellerTime = SellerTimeModel.fromJson(json['sellerTime']??{});
+    sellerDayOff = (json['sellerDayOff'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList() ?? [];
   }
 }
 

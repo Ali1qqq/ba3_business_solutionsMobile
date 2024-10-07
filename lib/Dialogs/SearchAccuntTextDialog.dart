@@ -1,11 +1,9 @@
 import 'package:ba3_business_solutions/controller/account_view_model.dart';
 import 'package:ba3_business_solutions/model/account_model.dart';
-import 'package:ba3_business_solutions/model/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../Widgets/new_Pluto.dart';
-import '../../controller/product_view_model.dart';
 import '../view/invoices/widget/custom_TextField.dart';
 
 Future<String?> searchAccountTextDialog(String accountText)async {
@@ -35,7 +33,7 @@ Future<String?> searchAccountTextDialog(String accountText)async {
                     child: ClipRRect(
                       clipBehavior: Clip.hardEdge,
                       borderRadius: BorderRadius.circular(15),
-                      child: CustomPlutoGrid(
+                      child: CustomPlutoGridWithAppBar(
                         onSelected: (selected) {
                           accountTextController.text=selected.row?.cells["اسم الحساب"]!.value;
                           Get.back();
@@ -47,7 +45,7 @@ Future<String?> searchAccountTextDialog(String accountText)async {
                     )),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: customTextFieldWithIcon(accountTextController, (_) async {
+                  child: CustomTextFieldWithIcon(controller: accountTextController,        onSubmitted:(_) async {
                     accountViewModel.update();
                   }, onIconPressed: () {}),
                 ),

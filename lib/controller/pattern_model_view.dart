@@ -11,19 +11,50 @@ import 'account_view_model.dart';
 
 class PatternViewModel extends GetxController {
   PatternRecordDataSource? recordViewDataSource;
+  TextEditingController codeController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController primaryController = TextEditingController();
+  TextEditingController giftAccountController = TextEditingController();
+  TextEditingController secgiftAccountController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
+  TextEditingController vatAccountController = TextEditingController();
+  TextEditingController secondaryController = TextEditingController();
+  TextEditingController storeEditController = TextEditingController();
+  TextEditingController storeNewController = TextEditingController();
+  TextEditingController patPartnerCommission = TextEditingController();
+  TextEditingController patPartnerRatio = TextEditingController();
+  TextEditingController patPartnerAccountFee = TextEditingController();
+  bool hasVatController = false;
 
   PatternViewModel() {
     getAllPattern();
     // recordViewDataSource=PatternRecordDataSource(patternRecordModel: patternModel);
   }
 
-  RxMap<String, PatternModel> patternModel = <String, PatternModel>{}.obs;
+  initPage(String key) {
+    editPatternModel = PatternModel.fromJson(patternModel[key]?.toJson());
+    nameController.text = editPatternModel?.patName ?? "";
+    fullNameController.text = editPatternModel?.patFullName ?? "";
+    codeController.text = editPatternModel?.patCode ?? "";
+    patPartnerRatio.text = editPatternModel?.patPartnerRatio.toString() ?? "";
+    patPartnerCommission.text = editPatternModel?.patPartnerCommission.toString() ?? "";
+    primaryController.text = getAccountNameFromId(editPatternModel?.patPrimary);
+    patPartnerAccountFee.text = getAccountNameFromId(editPatternModel?.patPartnerFeeAccount);
+    typeController.text = editPatternModel?.patType ?? "";
+    giftAccountController.text = getAccountNameFromId(editPatternModel?.patGiftAccount);
+    secgiftAccountController.text = getAccountNameFromId(editPatternModel?.patSecGiftAccount);
+    secondaryController.text = getAccountNameFromId(editPatternModel?.patSecondary);
+    storeEditController.text = getStoreNameFromId(editPatternModel?.patStore);
+    storeNewController.text = getStoreNameFromId(editPatternModel?.patNewStore);
+    // storeController.text=getStoreNameFromId("store1702230185210544");
+  }
 
+  RxMap<String, PatternModel> patternModel = <String, PatternModel>{}.obs;
 
   final CollectionReference _patternCollectionRef = FirebaseFirestore.instance.collection(Const.patternCollection);
 
   List<String> accountPickList = [];
-
 
   var accountController = Get.find<AccountViewModel>();
   var storeController = Get.find<StoreViewModel>();
@@ -32,24 +63,18 @@ class PatternViewModel extends GetxController {
 
   getAllPattern() {
     _patternCollectionRef.snapshots().listen((value) {
-
       patternModel.clear();
       for (var element in value.docs) {
         patternModel[element.id] = PatternModel();
         patternModel[element.id] = PatternModel.fromJson(element.data() as Map<String, dynamic>);
       }
-      recordViewDataSource = PatternRecordDataSource(patternRecordModel: {});
-      recordViewDataSource = PatternRecordDataSource(patternRecordModel: patternModel);
-
-      WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
-        update();
-      });
+      update();
     });
   }
 
   addPattern() {
     List a = patternModel.values.where((element) => editPatternModel!.patCode == element.patCode).toList();
-    if(a.isNotEmpty){
+    if (a.isNotEmpty) {
       Get.snackbar("خطأ", "الرمز مستخدم");
       return;
     }
@@ -57,9 +82,9 @@ class PatternViewModel extends GetxController {
     PatternModel _ = PatternModel.fromJson(editPatternModel?.toJson());
     _.patPrimary = getAccountIdFromText(_.patPrimary);
     _.patSecondary = getAccountIdFromText(_.patSecondary);
-    _.patVatAccount = getAccountIdFromText(_.patVatAccount);
     _.patGiftAccount = getAccountIdFromText(_.patGiftAccount);
     _.patSecGiftAccount = getAccountIdFromText(_.patSecGiftAccount);
+    _.patPartnerFeeAccount = getAccountIdFromText(_.patPartnerFeeAccount);
     _.patStore = getStoreIdFromText(_.patStore);
     _.patNewStore = getStoreIdFromText(_.patNewStore);
     _patternCollectionRef.doc(_.patId).set(_.toJson());
@@ -70,10 +95,10 @@ class PatternViewModel extends GetxController {
     // print(editPatternModel?.toJson());
     PatternModel _ = PatternModel.fromJson(editPatternModel?.toJson());
     if (!(_.patPrimary?.contains("acc") ?? false)) _.patPrimary = getAccountIdFromText(_.patPrimary);
-    if (!(_.patVatAccount?.contains("acc") ?? false)) _.patVatAccount = getAccountIdFromText(_.patVatAccount);
     if (!(_.patSecondary?.contains("acc") ?? false)) _.patSecondary = getAccountIdFromText(_.patSecondary);
     if (!(_.patGiftAccount?.contains("acc") ?? false)) _.patGiftAccount = getAccountIdFromText(_.patGiftAccount);
     if (!(_.patSecGiftAccount?.contains("acc") ?? false)) _.patSecGiftAccount = getAccountIdFromText(_.patSecGiftAccount);
+    if (!(_.patPartnerFeeAccount?.contains("acc") ?? false)) _.patPartnerFeeAccount = getAccountIdFromText(_.patPartnerFeeAccount);
     if (!(_.patStore?.contains("store") ?? false)) _.patStore = getStoreIdFromText(_.patStore);
     if (!(_.patNewStore?.contains("store") ?? false)) _.patNewStore = getStoreIdFromText(_.patNewStore);
     // print(editPatternModel?.toJson());
@@ -90,11 +115,8 @@ class PatternViewModel extends GetxController {
   //   return PatternModel(patName: patNameController.text, patCode: patCodeController.text, patId: generateId(RecordType.pattern), patPrimary: patPrimaryController.text, patType: patTypeController.text);
   // }
 
-
-
-
-
   List _storePickList = [];
+
   Future<String> getStoreComplete(text) async {
     var _ = '';
     _storePickList = [];
@@ -142,31 +164,45 @@ class PatternViewModel extends GetxController {
 
   clearController() {
     editPatternModel = null;
+    editPatternModel = PatternModel();
+    codeController.text = ((int.tryParse(patternModel.values.map((e) => e.patCode).last.toString()) ?? 0) + 1).toString();
+    editPatternModel!.patCode = codeController.text;
+    editPatternModel?.patColor = 4294198070;
+    editPatternModel?.patType = Const.invoiceTypeSales;
+    nameController = TextEditingController();
+    fullNameController = TextEditingController();
+    primaryController = TextEditingController();
+    giftAccountController = TextEditingController();
+    secgiftAccountController = TextEditingController();
+    typeController = TextEditingController();
+    vatAccountController = TextEditingController();
+    secondaryController = TextEditingController();
+    storeEditController = TextEditingController();
+    storeNewController = TextEditingController();
+    patPartnerCommission = TextEditingController();
+    patPartnerRatio = TextEditingController();
+    patPartnerAccountFee = TextEditingController();
     update();
   }
 
-  // getNewCode() {
-  //   int maxCode = 1;
-  //   if (patternModel.isNotEmpty) {
-  //     for (var element in patternModel.values) {
-  //       int.parse(element.patCode!) > maxCode
-  //           ? maxCode = int.parse(element.patCode!)
-  //           : maxCode = maxCode;
-  //     }
-  //   }
+// getNewCode() {
+//   int maxCode = 1;
+//   if (patternModel.isNotEmpty) {
+//     for (var element in patternModel.values) {
+//       int.parse(element.patCode!) > maxCode
+//           ? maxCode = int.parse(element.patCode!)
+//           : maxCode = maxCode;
+//     }
+//   }
 
-  //   patCodeController.text = (maxCode + 1).toString();
-  // }
+//   patCodeController.text = (maxCode + 1).toString();
+// }
 }
-String? getVatAccountFromPatternId(id){
-  if (id != null && id != " " && id != "") {
-    return Get.find<PatternViewModel>().patternModel[id]?.patVatAccount!;
-  } else {
-    return null;
-  }}
-PatternModel getPatModelFromPatternId(id){
+
+PatternModel getPatModelFromPatternId(id) {
   if (id != null && id != " " && id != "") {
     return Get.find<PatternViewModel>().patternModel[id]!;
   } else {
     return PatternModel(patName: "not found");
-  }}
+  }
+}

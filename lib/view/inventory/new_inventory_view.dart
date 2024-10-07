@@ -1,7 +1,6 @@
 import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 import 'package:ba3_business_solutions/controller/user_management_model.dart';
 import 'package:ba3_business_solutions/utils/generate_id.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tree_pro/flutter_tree.dart';
 import 'package:get/get.dart';
@@ -19,7 +18,7 @@ class NewInventoryView extends StatefulWidget {
 
 class _NewInventoryViewState extends State<NewInventoryView> {
   List<Map<String, dynamic>> treeListData = [];
-  TextEditingController nameController = TextEditingController(text: "جرد بتاريخ ${DateTime.now().toString().split(" ")[0]}");
+  TextEditingController dateInventoryController = TextEditingController(text: "جرد بتاريخ ${DateTime.now().toString().split(" ")[0]}");
   List allData = [];
 
   @override
@@ -29,8 +28,8 @@ class _NewInventoryViewState extends State<NewInventoryView> {
   }
 
   loadData() async {
-    IsolateViewModel isolateViewModel = Get.find<IsolateViewModel>();
-    isolateViewModel.init();
+    // IsolateViewModel isolateViewModel = Get.find<IsolateViewModel>();
+    // isolateViewModel.init();
     ProductViewModel productViewModel = Get.find<ProductViewModel>();
 
     ProductModel a = ProductModel(prodName: "ALL DATA", prodId: 'prod1', prodParentId: "prod0", prodFullCode: "0");
@@ -85,7 +84,7 @@ class _NewInventoryViewState extends State<NewInventoryView> {
                 onPressed: () async {
                   // widget.inventoryModel.inventoryTargetedProductList = allData;
                   await HiveDataBase.inventoryModelBox
-                      .put("0", InventoryModel(inventoryUserId: getMyUserUserId(), inventoryId: generateId(RecordType.inventory), inventoryDate: DateTime.now().toString().split(" ")[0], inventoryName: nameController.text, inventoryRecord: {}, inventoryTargetedProductList: allData));
+                      .put("0", InventoryModel(inventoryUserId: getMyUserUserId(), inventoryId: generateId(RecordType.inventory), inventoryDate: DateTime.now().toString().split(" ")[0], inventoryName: dateInventoryController.text, inventoryRecord: {}, inventoryTargetedProductList: {}));
                   setState(() {});
                   Get.back();
                 },
@@ -113,7 +112,7 @@ class _NewInventoryViewState extends State<NewInventoryView> {
                       height: 60,
                       width: 400,
                       child: TextFormField(
-                        controller: nameController,
+                        controller: dateInventoryController,
                         decoration: InputDecoration(hintText: "اسم الجرد"),
                       )),
                 ],

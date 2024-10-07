@@ -1,20 +1,18 @@
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-
 import '../Const/const.dart';
 import '../Dialogs/Search_Product_Text_Dialog.dart';
-import 'Invoice_Pluto_Edit_View_Model.dart';
 
-class InvoiceEnterPlutoGridAction extends PlutoGridShortcutAction  {
-  const InvoiceEnterPlutoGridAction();
-
+class GetProductEnterPlutoGridAction extends PlutoGridShortcutAction  {
+  const GetProductEnterPlutoGridAction(this.controller,this.fieldTitle);
+  final dynamic controller;
+  final String fieldTitle;
   @override
   void execute({
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getProduct(stateManager, Get.find<InvoicePlutoViewModel>());
+    await getProduct(stateManager, controller,fieldTitle);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -56,7 +54,7 @@ class InvoiceEnterPlutoGridAction extends PlutoGridShortcutAction  {
     stateManager.notifyListeners();
   }
 
-  getProduct(PlutoGridStateManager stateManager, InvoicePlutoViewModel controller) async {
+  getProduct(PlutoGridStateManager stateManager, dynamic controller,fieldTitle) async {
 
     if (stateManager.currentColumn?.field == "invRecProduct") {
       String? newValue = await searchProductTextDialog(stateManager.currentCell?.value);
@@ -64,23 +62,23 @@ class InvoiceEnterPlutoGridAction extends PlutoGridShortcutAction  {
         stateManager.changeCellValue(
           stateManager.currentRow!.cells[stateManager.currentColumn?.field]!,
           newValue,
+          force: true,
+          callOnChangedEvent: true,
           notify: true,
         );
-        stateManager.changeCellValue(
-          stateManager.currentRow!.cells["invRecSubTotal"]!,
-          (double.parse(controller.getPrice(prodName: newValue, type: Const.invoiceChoosePriceMethodeCustomerPrice).toString()) / 1.05).toString(),
-          notify: true,
-        );
+        controller.updateInvoiceValuesByTotal(controller.getPrice(prodName: newValue, type: Const.invoiceChoosePriceMethodeCustomerPrice), 1);
+
       } else {
         stateManager.changeCellValue(
           stateManager.currentRow!.cells["invRecProduct"]!,
-          '',
+          stateManager.currentCell?.value,
+          callOnChangedEvent: false,
           notify: true,
         );
       }
+      stateManager.notifyListeners();
+      controller.update();
     }
-    stateManager.notifyListeners();
-    controller.update();
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {
@@ -97,14 +95,27 @@ class InvoiceEnterPlutoGridAction extends PlutoGridShortcutAction  {
       return;
     }
 
-    if (enterKeyAction.isEditingAndMoveDown) {
+    // تحقق مما إذا كان في الخلية الأخيرة
+    bool isLastCellInRow = stateManager.currentColumn?.field == stateManager.columns.last.field;
+    bool isLastRow = stateManager.currentRowIdx == stateManager.rows.length - 1;
+
+    if (enterKeyAction.isEditingAndMoveDown || enterKeyAction.isEditingAndMoveRight) {
       if (HardwareKeyboard.instance.isShiftPressed) {
+        // الانتقال للأعلى إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
           PlutoMoveDirection.up,
           force: true,
           notify: true,
         );
+      } else if (isLastCellInRow && !isLastRow) {
+        // إذا كانت الخلية الأخيرة في السطر الحالي، انتقل إلى بداية السطر التالي
+        stateManager.setCurrentCell(
+          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.currentRowIdx! + 1,
+          notify: true,
+        );
       } else {
+        // إذا لم تكن في آخر خلية، انتقل إلى الخلية التالية
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
           force: true,
@@ -113,12 +124,21 @@ class InvoiceEnterPlutoGridAction extends PlutoGridShortcutAction  {
       }
     } else if (enterKeyAction.isEditingAndMoveRight) {
       if (HardwareKeyboard.instance.isShiftPressed) {
+        // الانتقال لليمين إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
           force: true,
           notify: false,
         );
+      } else if (isLastCellInRow && !isLastRow) {
+        // إذا كانت الخلية الأخيرة في السطر، انتقل إلى بداية السطر التالي
+        stateManager.setCurrentCell(
+          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.currentRowIdx! + 1,
+          notify: true,
+        );
       } else {
+        // الانتقال لليمين إذا لم تكن في آخر خلية
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
           force: true,

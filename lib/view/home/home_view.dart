@@ -136,7 +136,7 @@ class HomeView extends StatelessWidget {
                                               children: [
                                                 Text(model.accName.toString(), style: TextStyle(fontSize: 22),),
                                                 Spacer(),
-                                                Text(accountController.getBalance(model.accId).toStringAsFixed(2), style: TextStyle(fontSize: 22),),
+                                                Text(accountController.getBalance(model.accId!).toStringAsFixed(2), style: TextStyle(fontSize: 22),),
                                               ],
                                             ),
                                           ),
@@ -166,7 +166,7 @@ class HomeView extends StatelessWidget {
                                                             textDirection: TextDirection.rtl,
                                                             decoration: const InputDecoration(hintText: "اكتب اسم الحساب او رقمه",hintTextDirection: TextDirection.rtl),
                                                             onChanged: (_){
-                                                              accountList = getAccountModelFromName(_);
+                                                              accountList = getAccountModelsFromName(_);
                                                               print(accountList);
                                                               setstate(() {});
                                                             },

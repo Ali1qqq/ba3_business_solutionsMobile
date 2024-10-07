@@ -2,14 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-    <key>UIFileSharingEnabled</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>app use camera to scan qr code</string>
 	<key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Ba3 Business Solutions</string>
 	<key>CFBundleExecutable</key>
@@ -30,6 +26,30 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>يحتاج التطبيق إلى استخدام البلوتوث للطباعة عبر الأجهزة المتصلة بالتطبيق.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We use Bluetooth to connect to and interact with peripheral devices for printing or data transfer.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>يحتاج التطبيق إلى الكاميرا لمسح رموز QR لأغراض التحقق والمصادقة.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We require location access both when the app is in use and in the background to ensure secure login and location-based functionality.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to verify your login and ensure access is restricted to specific locations for security purposes.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to verify your login and restrict access to specific locations for security purposes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يحتاج التطبيق إلى الوصول إلى مكتبة الصور لتمكينك من اختيار الصور لاستخدامها داخل التطبيق.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -47,9 +67,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+	<key>aps-environment</key>
+	<string>production</string>
 </dict>
 </plist>

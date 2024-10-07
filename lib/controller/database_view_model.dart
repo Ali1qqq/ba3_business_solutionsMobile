@@ -30,8 +30,9 @@ class DataBaseViewModel extends GetxController {
 
 
   getAllDataBase() {
-    FirebaseFirestore.instance.collection(Const.settingCollection).doc(Const.dataCollection).snapshots().listen((value) {
+    FirebaseFirestore.instance.collection(Const.settingCollection).doc(Const.dataCollection).get().then((value) {
       // databaseList.clear();
+
       databaseList=(value.data()?['dataList'] as List).map((e) => e.toString()).toList();
 
       WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {

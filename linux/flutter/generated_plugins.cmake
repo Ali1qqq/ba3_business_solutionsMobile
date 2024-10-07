@@ -4,10 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_linux
-  bitsdojo_window_linux
   flutter_platform_alert
-  flutter_window_close
-  smart_auth
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

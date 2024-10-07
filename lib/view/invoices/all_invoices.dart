@@ -1,12 +1,13 @@
 import 'package:ba3_business_solutions/controller/invoice_view_model.dart';
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
 import 'package:ba3_business_solutions/utils/hive.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Const/const.dart';
+import '../../Widgets/Discount_Pluto_Edit_View_Model.dart';
+import '../../Widgets/Invoice_Pluto_Edit_View_Model.dart';
 import '../../Widgets/new_Pluto.dart';
-import 'invoice_view.dart';
+import 'New_Invoice_View.dart';
 
 class AllInvoice extends StatelessWidget {
   const AllInvoice({super.key, required this.listDate, required this.productName});
@@ -17,27 +18,42 @@ class AllInvoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InvoiceViewModel>(builder: (controller) {
-      return CustomPlutoGrid(
+      return CustomPlutoGridWithAppBar(
         title: "جميع الفواتير",
         type: Const.globalTypeInvoice,
         onLoaded: (e) {},
         onSelected: (p0) {
           print(p0.row?.cells["الرقم التسلسلي"]?.value);
-          Get.to(() => InvoiceView(
+          Get.to(
+            () => InvoiceView(
+              billId: p0.row?.cells["الرقم التسلسلي"]?.value,
+              patternId: p0.row?.cells["النمط"]?.value,
+            ),
+            binding: BindingsBuilder(() {
+              Get.lazyPut(() => InvoicePlutoViewModel());
+              Get.lazyPut(() => DiscountPlutoViewModel());
+            }),
+          );
+          /*   Get.to(() => InvoiceView(
                 billId: p0.row?.cells["الرقم التسلسلي"]?.value,
                 patternId: "",
-              ));
+              ));*/
         },
-        modelList: controller.invoiceModel.values.where((element) {
-
-         if( HiveDataBase.getIsFree()) {
-         return  !(element.invCode?.startsWith("F")??true);
-         } else {
-           return true;
-         }
-        },).where(
+        modelList: controller.invoiceModel.values.where(
           (element) {
-            if (productName != null&&productName != "") {
+            if (!HiveDataBase.getWithFree() && getPatTypeFromId(element.patternId!) == Const.invoiceTypeBuy) {
+              return element.invRecords!.where(
+                (element) {
+                  return getProductModelFromId(element.invRecProduct)?.prodIsLocal == false;
+                },
+              ).isEmpty;
+            } else {
+              return true;
+            }
+          },
+        ).where(
+          (element) {
+            if (productName != null && productName != "") {
               return listDate.contains((element.invDate?.split(" ")[0] ?? "")) &&
                   (element.invRecords
                           ?.where(

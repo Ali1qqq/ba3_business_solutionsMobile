@@ -34,17 +34,17 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  firebase_core: ^2.21.0
+  firebase_core: ^3.5.0
   get: ^4.6.6
-  syncfusion_flutter_datagrid:  ^26.2.8
+  syncfusion_flutter_datagrid: ^27.1.48
   uuid:
   math_expressions:
-  cloud_firestore: ^4.12.2
-  syncfusion_flutter_datepicker: ^26.2.8
+  cloud_firestore: ^5.4.2
+  syncfusion_flutter_datepicker: ^27.1.48
   flutter_fancy_tree_view:
   file_picker:
   pinput:
-  fl_chart: 0.68.0
+  fl_chart: ^0.69.0
   qr_code_scanner: 1.0.1
   csv:
   qr_flutter: ^4.1.0
@@ -53,9 +53,9 @@ dependencies:
   hive_flutter:
   flutter_material_color_picker:
   nfc_manager:
-  audioplayers: ^5.0.0
-  audioplayers_android: ^4.0.3
-  audioplayers_darwin: ^5.0.0
+  audioplayers: ^6.1.0
+  audioplayers_android: ^5.0.0
+  audioplayers_darwin: ^6.0.0
   syncfusion_flutter_gauges:
   stop_watch_timer:
   infinite_scroll_pagination:
@@ -63,15 +63,14 @@ dependencies:
   tab_container:
   flutter_svg:
   translator:
-  print_bluetooth_thermal:
+  print_bluetooth_thermal: ^1.1.1
   esc_pos_utils_plus:
-  flutter_window_close:
   flutter_platform_alert:
   pluto_grid: ^8.0.0
   dio: ^5.5.0+1
-  path:
-  bitsdojo_window: ^0.1.6
-
+  permission_handler: ^11.3.1
+  geolocator: ^13.0.1
+  mailer: ^6.2.0
 
 
 
@@ -83,7 +82,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

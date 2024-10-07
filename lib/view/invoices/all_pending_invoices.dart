@@ -1,18 +1,14 @@
 import 'package:ba3_business_solutions/Const/const.dart';
 
 import 'package:ba3_business_solutions/controller/invoice_view_model.dart';
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
+import '../../Widgets/Discount_Pluto_Edit_View_Model.dart';
+import '../../Widgets/Invoice_Pluto_Edit_View_Model.dart';
 import '../../Widgets/new_Pluto.dart';
-import '../../model/global_model.dart';
-import '../../utils/logger.dart';
-import '../widget/filtering_data_grid.dart';
-import 'invoice_view.dart';
+import 'New_Invoice_View.dart';
 
 class AllPendingInvoice extends StatelessWidget {
   const AllPendingInvoice({super.key});
@@ -31,15 +27,23 @@ class AllPendingInvoice extends StatelessWidget {
                 child: Text("لا يوجد فواتيير غير مأكدة"),
               ),
             )
-          : CustomPlutoGrid(
+          : CustomPlutoGridWithAppBar(
               title: "جميع الفواتير",
               onLoaded: (e) {},
         type:Const.globalTypeInvoice,
               onSelected: (p0) {
-                Get.to(() => InvoiceView(
-                      billId: p0.row?.cells["الرقم التسلسلي"]?.value,
-                      patternId: "",
-                    ));
+
+                Get.to(
+                      () => InvoiceView(
+                    billId:  p0.row?.cells["الرقم التسلسلي"]?.value,
+                    patternId: p0.row?.cells["النمط"]?.value,
+                  ),
+                  binding: BindingsBuilder(() {
+                    Get.lazyPut(() => InvoicePlutoViewModel());
+                    Get.lazyPut(() => DiscountPlutoViewModel());
+                  }),
+                );
+
               },
               modelList: controller.invoiceModel.values
                   .where(

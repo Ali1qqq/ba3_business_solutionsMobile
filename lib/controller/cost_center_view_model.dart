@@ -12,7 +12,7 @@ class CostCenterViewModel extends GetxController {
   TextEditingController? editCon;
 
   CostCenterViewModel() {
-    getAllCostCenter();
+    // getAllCostCenter();
   }
 
   var lastIndex;
@@ -23,9 +23,9 @@ class CostCenterViewModel extends GetxController {
   void getAllCostCenter({String? goto}) {
     FirebaseFirestore.instance.collection(Const.costCenterCollection).snapshots().listen((value) async {
       costCenterModelList.clear();
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         costCenterModelList[element.id] = CostCenterModle.fromJson(element.data(), element.id);
-      });
+      }
       initModel();
       initPage();
       go(lastIndex);

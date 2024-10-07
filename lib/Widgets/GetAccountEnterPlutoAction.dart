@@ -1,13 +1,14 @@
-import 'package:ba3_business_solutions/Widgets/Discount_Pluto_Edit_View_Model.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../Dialogs/SearchAccuntTextDialog.dart';
 
 
-class DiscountEnterPlutoGridAction extends PlutoGridShortcutAction {
-  const DiscountEnterPlutoGridAction();
+class GetAccountEnterPlutoGridAction extends PlutoGridShortcutAction {
+  const GetAccountEnterPlutoGridAction(this.controller,this.fieldTitle);
+
+  final dynamic controller;
+  final String fieldTitle;
 
   @override
   void execute({
@@ -15,7 +16,7 @@ class DiscountEnterPlutoGridAction extends PlutoGridShortcutAction {
     required PlutoGridStateManager stateManager,
   }) async {
 
-    await getAccount(stateManager, Get.find<DiscountPlutoViewModel>());
+    await getAccount(stateManager,controller,fieldTitle);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -57,19 +58,19 @@ class DiscountEnterPlutoGridAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  getAccount(PlutoGridStateManager stateManager, DiscountPlutoViewModel controller) async {
-    if (stateManager.currentColumn?.field == "accountId") {
+  getAccount(PlutoGridStateManager stateManager, dynamic controller,String fieldName) async {
+    if (stateManager.currentColumn?.field == fieldName) {
       String? newValue = await searchAccountTextDialog(stateManager.currentCell?.value);
       if (newValue != "") {
         stateManager.changeCellValue(
-          stateManager.currentRow!.cells["accountId"]!,
+          stateManager.currentRow!.cells[fieldName]!,
           newValue,
           notify: true,
         );
 
       } else {
         stateManager.changeCellValue(
-          stateManager.currentRow!.cells["accountId"]!,
+          stateManager.currentRow!.cells[fieldName]!,
           '',
           notify: true,
         );

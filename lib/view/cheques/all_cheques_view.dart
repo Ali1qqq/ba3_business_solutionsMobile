@@ -1,20 +1,46 @@
 import 'package:ba3_business_solutions/controller/cheque_view_model.dart';
 import 'package:ba3_business_solutions/utils/logger.dart';
 import 'package:ba3_business_solutions/view/cheques/add_cheque.dart';
+import 'package:ba3_business_solutions/view/widget/CustomWindowTitleBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../Const/const.dart';
+import '../../Widgets/new_Pluto.dart';
+import '../../controller/account_view_model.dart';
 import '../../model/global_model.dart';
+import '../../utils/hive.dart';
 
 class AllCheques extends StatelessWidget {
   const AllCheques({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var controller = Get.find<ChequeViewModel>();
-    return Directionality(
+    return GetBuilder<ChequeViewModel>(
+        builder: (controller) {
+          return  CustomPlutoGridWithAppBar(
+            title: "جميع الشيكات",
+            type: Const.globalTypeCheque,
+            onLoaded: (e){
+            },
+            onSelected: (p0) {
+              Get.to(() => AddCheque( modelKey: p0.row?.cells["cheqId"]?.value,));
+              // Get.to(() =>  AddAccount(  modelKey: p0.row?.cells["accId"]?.value,oldParent:(p0.row?.cells["حساب الاب"]?.value) ,));
+              // Get.to(() => AccountDetails(
+              //   modelKey: p0.row?.cells["accId"]?.value,
+              // ));
+              // Get.to(() => InvoiceView(
+              //   billId:p0.row?.cells["الرقم التسلسلي"]?.value,
+              //   patternId: "",
+              // ));
+            },
+            modelList: controller.allCheques.values.toList(),
+
+          );
+        }
+    );
+/*    return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
@@ -66,7 +92,7 @@ class AllCheques extends StatelessWidget {
 
                 }),
       ),
-    );
+    );*/
   }
 }
 

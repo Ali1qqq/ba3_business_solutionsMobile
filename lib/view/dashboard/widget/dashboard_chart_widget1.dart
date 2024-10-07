@@ -41,42 +41,6 @@ class _DashboardChartWidget1State extends State<DashboardChartWidget1> {
     super.initState();
   }
 
-  // Widget leftTitleWidgets(double value, TitleMeta meta) {
-  //   if (value % 1 != 0) {
-  //     return Container();
-  //   }
-  //   final style = TextStyle(
-  //     color: Colors.black.withOpacity(0.5),
-  //     fontSize: 10,
-  //   );
-  //   String text;
-  //   switch (value.toInt()) {
-  //     case 0:
-  //       text = '';
-  //       break;
-  //     case 1:
-  //       text = '1k calories';
-  //       break;
-  //     case 2:
-  //       text = '2k calories';
-  //       break;
-  //     case 3:
-  //       text = '3k calories';
-  //       break;
-  //     default:
-  //       return Container();
-  //   }
-  //
-  //   return SideTitleWidget(
-  //     axisSide: meta.axisSide,
-  //     space: 6,
-  //     fitInside: fitInsideLeftTitle
-  //         ? SideTitleFitInsideData.fromTitleMeta(meta)
-  //         : SideTitleFitInsideData.disable(),
-  //     child: Text(text, style: style, textAlign: TextAlign.center),
-  //   );
-  // }
-
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     final isTouched = value == touchedValue;
     final style = TextStyle(
@@ -113,12 +77,14 @@ class _DashboardChartWidget1State extends State<DashboardChartWidget1> {
       listData.forEach((key, value) {
         if(value.sellerRecord!.isNotEmpty){
           List<SellerRecModel> _ = value.sellerRecord!.where((element) {
+           //  print(element.selleRecInvDate);2024-09-02 00:00:00
            String date =  element.selleRecInvDate.toString().split(" ")[0];
            String year = DateTime.now().toString().split("-")[0];
            String month = DateTime.now().toString().split("-")[1];
-           return date.split("-")[0] == year &&date.split("-")[1] == month;
+           return date.split("-")[1] == month;
           },).toList();
           if(_.isNotEmpty) {
+
             listStop.add(
             FlSpot(key.toDouble(),_.map((e) => double.parse(e.selleRecAmount??"0"),).reduce((value, element) => value+element,))
           );

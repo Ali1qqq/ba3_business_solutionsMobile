@@ -29,7 +29,7 @@ class _EntryBondTypeState extends State<EntryBondType> {
             Item("سند قيد",(){
             }),
              if(checkPermission(Const.roleUserAdmin , Const.roleViewInvoice))
-            Item("عرض جميع السندات",(){
+            Item("عرض سندات القيد ",(){
               checkPermissionForOperation(Const.roleUserRead , Const.roleViewBond).then((value) {
                 if(value) Get.to(()=>AllEntryBonds());
               });

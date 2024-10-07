@@ -2,8 +2,11 @@ import 'package:ba3_business_solutions/controller/product_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Const/const.dart';
 import '../Services/Get_Date_From_String.dart';
+import '../main.dart';
 import '../view/invoices/Controller/Search_View_Controller.dart';
+import '../view/invoices/New_Invoice_View.dart';
 import '../view/invoices/all_invoices.dart';
 import 'Search_Product_Text_Dialog.dart';
 import 'Widgets/Option_Text_Widget.dart';
@@ -16,6 +19,8 @@ class InvoiceOptionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: backGroundColor,
+
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Directionality(
@@ -36,21 +41,6 @@ class InvoiceOptionDialog extends StatelessWidget {
                     controller.update();
                   },
                 ),
-                // OptionTextWidget(
-                //   title: "المجموعة :  ",
-                //   controller: controller.groupForSearchController,
-                //   onSubmitted: (text) async {},
-                // ),
-                // OptionTextWidget(
-                //   title: "المستودع :  ",
-                //   controller: controller.storeForSearchController,
-                //   onSubmitted: (text) async {},
-                // ),
-                // OptionTextWidget(
-                //   title: "الزبون :  ",
-                //   controller: controller.clientForSearchController,
-                //   onSubmitted: (text) async {},
-                // ),
                 OptionTextWidget(
                   title: "من تاريخ :  ",
                   controller: controller.startDateForSearchController,
@@ -67,23 +57,14 @@ class InvoiceOptionDialog extends StatelessWidget {
                     controller.update();
                   },
                 ),
-                ElevatedButton(
+                AppButton(
+                  title: "موافق",
+
+                  iconData: Icons.check,
                   onPressed: () {
-                    List<String> getDatesBetween(DateTime startDate, DateTime endDate) {
-                      List<String> dates = [];
-                      DateTime currentDate = startDate;
-
-                      while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
-                        dates.add(currentDate.toString().split(" ")[0]);
-                        currentDate = currentDate.add(const Duration(days: 1));
-                      }
-
-                      return dates;
-                    }
 
                     Get.to(() => AllInvoice(listDate: getDatesBetween(DateTime.parse(controller.startDateForSearchController.text), DateTime.parse(controller.endDateForSearchController.text)), productName: getProductIdFromName(controller.productForSearchController.text)));
                   },
-                  child: const Text('موافق'),
                 ),
               ],
             );

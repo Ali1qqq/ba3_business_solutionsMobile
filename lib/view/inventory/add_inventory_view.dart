@@ -1,18 +1,22 @@
 import 'package:ba3_business_solutions/controller/inventory_view_model.dart';
 import 'package:ba3_business_solutions/controller/product_view_model.dart';
 import 'package:ba3_business_solutions/controller/store_view_model.dart';
+import 'package:ba3_business_solutions/controller/user_management_model.dart';
 import 'package:ba3_business_solutions/model/inventory_model.dart';
 import 'package:ba3_business_solutions/model/product_model.dart';
-import 'package:ba3_business_solutions/utils/hive.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:ba3_business_solutions/view/invoices/New_Invoice_View.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+
+import '../../Const/const.dart';
+import '../../controller/sellers_view_model.dart';
 
 class AddInventoryView extends StatefulWidget {
   final InventoryModel inventoryModel;
-  const AddInventoryView({Key? key, required  this.inventoryModel}) : super(key: key);
+
+  const AddInventoryView({Key? key, required this.inventoryModel}) : super(key: key);
 
   @override
   State<AddInventoryView> createState() => _AddInventoryViewState();
@@ -24,11 +28,25 @@ class _AddInventoryViewState extends State<AddInventoryView> {
   bool isNotFound = false;
   late InventoryModel inventoryModel;
 
+  UserManagementViewModel myUser = Get.find<UserManagementViewModel>();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    if(Const.isNotTap){
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    }
+  }
+
   @override
   void initState() {
     inventoryModel = widget.inventoryModel;
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InventoryViewModel>(
@@ -38,17 +56,17 @@ class _AddInventoryViewState extends State<AddInventoryView> {
           child: Scaffold(
             appBar: AppBar(),
             body: Container(
-              padding: EdgeInsets.all(20),
-              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              width: MediaQuery.of(context).size.width,
               child: Column(
                 children: [
-                  SizedBox(
+                  /*         SizedBox(
                     width: double.infinity,
                     height: 75,
                     child: TextFormField(
                       autofocus: true,
                       controller: searchController,
-                      decoration: InputDecoration(hintText: "أدخل اسم المنتج للبحث"),
+                      decoration: const InputDecoration(hintText: "أدخل اسم المنتج للبحث"),
                       onFieldSubmitted: (_) {
                         prodList = controller.getProduct(_,inventoryModel.inventoryTargetedProductList);
                         controller.update();
@@ -56,136 +74,188 @@ class _AddInventoryViewState extends State<AddInventoryView> {
                         isNotFound = prodList.isEmpty;
                       },
                     ),
-                  ),
-                  if (prodList.isNotEmpty)
-                    Expanded(
-                      child: GetBuilder<ProductViewModel>(
-                        builder: (productController) {
-                          return ListView.builder(
-                              itemCount: prodList.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                ProductModel model = prodList[index];
-                                int count = productController.getCountOfProduct(model);
-                                Map<String, int> storeMap = {};
-                                model.prodRecord?.forEach((element) {
-                                  if (storeMap[element.prodRecStore] == null) storeMap[element.prodRecStore!] = 0;
-                                  storeMap[element.prodRecStore!] = int.parse(element.prodRecQuantity!) + storeMap[element.prodRecStore!]!;
-                                });
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Container(
-                                      color: Colors.grey.withOpacity(0.25),
-                                      height: 75,
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text("الاسم:"),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                              child: Text(
-                                            model.prodName.toString(),
-                                            style: TextStyle(fontSize: 18),
-                                          )),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text("الكمية الحقيقية:"),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            count.toString(),
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text("الكمية المدخلة في هذا الجرد:"),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            (inventoryModel.inventoryRecord[model.prodId!]??"0").toString(),
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                Get.defaultDialog(
-                                                    title: "رؤية التوزع في المستودعات",
-                                                    content: SizedBox(
-                                                      width: MediaQuery.sizeOf(context).width / 4,
-                                                      height: MediaQuery.sizeOf(context).width / 4,
-                                                      child: ListView.builder(
-                                                        itemCount: storeMap.length,
-                                                        itemBuilder: (context, index) {
-                                                          MapEntry model = storeMap.entries.toList()[index];
-                                                          return Row(
-                                                            children: [
-                                                              Text(model.value.toString()),
-                                                              Spacer(),
-                                                              Text(getStoreNameFromId(model.key)),
-                                                            ],
-                                                          );
-                                                        },
+                  ),*/
+                  // if (prodList.isNotEmpty)
+                  Expanded(
+                    child: GetBuilder<ProductViewModel>(
+                      builder: (productController) {
+                        return inventoryModel.inventoryTargetedProductList.values
+                                .where(
+                                  (element) => element == myUser.myUserModel?.userSellerId,
+                                )
+                                .isNotEmpty
+                            ? ListView.builder(
+                                itemCount: inventoryModel.inventoryTargetedProductList.values
+                                    .where(
+                                      (element) => element == myUser.myUserModel?.userSellerId,
+                                    )
+                                    .length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  Map<String, dynamic> myEnv = Map.fromEntries(
+                                    inventoryModel.inventoryTargetedProductList.entries.where(
+                                      (element) => element.value == myUser.myUserModel?.userSellerId,
+                                    ),
+                                  );
+                                  ProductModel model = getProductModelFromId(myEnv.keys.toList()[index])!;
+
+                                  int count = productController.getCountOfProduct(model);
+                                  Map<String, int> storeMap = {};
+                                  model.prodRecord?.forEach((element) {
+                                    if (storeMap[element.prodRecStore] == null) storeMap[element.prodRecStore!] = 0;
+                                    storeMap[element.prodRecStore!] = int.parse(element.prodRecQuantity!) + storeMap[element.prodRecStore!]!;
+                                  });
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            const Text("المسؤول عن جرد المادة:"),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                                child: Text(
+                                              getSellerNameFromId(myEnv.values.toList()[index]).toString(),
+                                              style: const TextStyle(fontSize: 18),
+                                            )),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.withOpacity(0.25), border: Border.all(color: inventoryModel.inventoryRecord[model.prodId!] != null ? Colors.green : Colors.red)),
+                                            height: 95,
+                                            padding: const EdgeInsets.all(8),
+                                            alignment: Alignment.center,
+                                            width: MediaQuery.of(context).size.width,
+                                            child: Column(
+                                              children: [
+                                                Center(
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      const SizedBox(
+                                                        width: 20,
                                                       ),
-                                                    ));
-                                              },
-                                              child: Text("رؤية التوزع في المستودعات")),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          ElevatedButton(onPressed: () async {
-                                            TextEditingController textController = TextEditingController();
-                                            String? a = await Get.defaultDialog(
-                                              title: "ادخل العدد",
-                                                content: Column(
+                                                      const Text("الاسم:"),
+                                                      const SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Expanded(
+                                                          child: Text(
+                                                        model.prodName.toString(),
+                                                        style: const TextStyle(fontSize: 18),
+                                                      )),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Row(
                                                   children: [
-                                                    TextFormField(
-                                                      keyboardType: TextInputType.number,
-                                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                      controller: textController,
+                                                    const SizedBox(
+                                                      width: 20,
                                                     ),
-                                                    SizedBox(height: 10,),
-                                                    ElevatedButton(onPressed: (){
-                                                      return Get.back(result: textController.text);
-                                                    }, child: Text("موافق"))
+                                                    const Text("الكمية الحقيقية:"),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      count.toString(),
+                                                      style: const TextStyle(fontSize: 18),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    const Text("الكمية المدخلة في هذا الجرد:"),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      (inventoryModel.inventoryRecord[model.prodId!] ?? "0").toString(),
+                                                      style: const TextStyle(fontSize: 18),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    const Spacer(),
+                                                    AppButton(
+                                                      onPressed: () async {
+                                                        TextEditingController textController = TextEditingController();
+                                                        String? a = await Get.defaultDialog(
+                                                            title: "ادخل العدد",
+                                                            content: Column(
+                                                              children: [
+                                                                TextFormField(
+                                                                  keyboardType: TextInputType.number,
+                                                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                                  controller: textController,
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                ElevatedButton(
+                                                                    onPressed: () {
+                                                                      return Get.back(result: textController.text);
+                                                                    },
+                                                                    child: Text("موافق"))
+                                                              ],
+                                                            ));
+                                                        if (a != null && a.isNotEmpty) {
+                                                          inventoryModel.inventoryRecord[model.prodId!] = a.toString();
+                                                          inventoryModel.inventoryRecord[model.prodId!] = a.toString();
+                                                          // setState(() {});
+                                                          FirebaseFirestore.instance.collection(Const.inventoryCollection).doc(inventoryModel.inventoryId).set(inventoryModel.toJson(), SetOptions(merge: true));
+                                                        }
+                                                      },
+                                                      title: "كتابة الكمية",
+                                                      iconData: Icons.add,
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    /*                 const SizedBox(
+                                                  width: 20,
+                                                ),
+                                                if (inventoryModel.inventoryRecord[model.prodId!] != null)
+                                                  Icon(Icons.check)
+                                                else
+                                                  SizedBox(
+                                                    width: 25,
+                                                  ),*/
                                                   ],
-                                                )
-                                            );
-                                            if(a!=null&&a.isNotEmpty){
-                                              inventoryModel.inventoryRecord[model.prodId!] = a.toString();
-                                              setState(() {});
-                                              HiveDataBase.inventoryModelBox.put("0",inventoryModel );
-                                            }
-                                          }, child: Text("كتابة الكمية")),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          if(inventoryModel.inventoryRecord[model.prodId!]!=null)
-                                          Icon(Icons.check)else SizedBox(width: 25,),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                        ],
-                                      )),
-                                );
-                              });
-                        },
-                      ),
-                    )
-                  else
-                    Expanded(
-                        child: Center(
-                      child: Text(isNotFound ? "لم يتم العثور على المنتج" : "ابحث عن المنتج المطلوب "),
-                    )),
+                                                ),
+                                              ],
+                                            )),
+                                      ],
+                                    ),
+                                  );
+                                })
+                            : Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.grey.withOpacity(0.25),
+                                ),
+                                child: const Text(
+                                  "لايوجد مواد لك يجب عليك جردها",
+                                  style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 20),
+                                ));
+                      },
+                    ),
+                  )
+                  // else
+                  //   Expanded(
+                  //       child: Center(
+                  //     child: Text(isNotFound ? "لم يتم العثور على المنتج" : "ابحث عن المنتج المطلوب "),
+                  //   )),
                 ],
               ),
             ),

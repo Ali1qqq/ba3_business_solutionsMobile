@@ -16,7 +16,7 @@ class AllTimeView extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("معاينة التارغتات"),
+          title: const Text("معاينة البريك لكل موظف"),
         ),
         body: GetBuilder<UserManagementViewModel>(builder: (controller) {
           return controller.allUserList.isEmpty
@@ -28,9 +28,9 @@ class AllTimeView extends StatelessWidget {
             child: ListView.builder(
               itemCount: controller.allUserList.values.length,
               itemBuilder: (context, index) {
-                late StopWatchTimer _stopWatchTimer;
+                late StopWatchTimer stopWatchTimer;
                 UserModel userModel = controller.allUserList.values.toList()[index];
-                _stopWatchTimer = StopWatchTimer(
+                stopWatchTimer = StopWatchTimer(
                   mode: StopWatchMode.countUp,
                 );
                 int totalSec = 0;
@@ -43,15 +43,14 @@ class AllTimeView extends StatelessWidget {
                   int time = userModel.userTimeList!.elementAtOrNull(i)??0;
                   if(DateTime.now().toString().split(" ")[0] == date.toString().split(" ")[0]){
                     totalSec += time;
-                  }else{
                   }
                 }
                 if(isClosed){
                 }else {
                   totalSec += DateTime.now().difference(userModel.userDateList!.last).inSeconds;
-                  _stopWatchTimer.onStartTimer();
+                  stopWatchTimer.onStartTimer();
                 }
-                _stopWatchTimer.setPresetSecondTime(totalSec);
+                stopWatchTimer.setPresetSecondTime(totalSec);
                 return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
@@ -75,8 +74,8 @@ class AllTimeView extends StatelessWidget {
                               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,color: userModel.userStatus == Const.userStatusOnline?Colors.green:Colors.orange),
                             ),
                             StreamBuilder<int>(
-                              stream: _stopWatchTimer.rawTime,
-                              initialData: _stopWatchTimer.rawTime.value,
+                              stream: stopWatchTimer.rawTime,
+                              initialData: stopWatchTimer.rawTime.value,
                               builder: (context, snap) {
                                 final value = snap.data!;
                                 final displayTime = StopWatchTimer.getDisplayTime(value, milliSecond: false);
@@ -97,20 +96,11 @@ class AllTimeView extends StatelessWidget {
                               backgroundColor: Colors.white,
                               radius: 40,
                               child: Icon(
-                                _stopWatchTimer.isRunning ? Icons.stop : Icons.play_arrow,
+                                stopWatchTimer.isRunning ? Icons.stop : Icons.play_arrow,
                                 size: 40,
                               ),
                             ),
-                            // Text("تارغيت الجوالات: " + sellerData.mobileTotal.toString(), style: const TextStyle(fontSize: 18)),
-                            // Text("تارغيت الاكسسوارات: " + sellerData.otherTotal.toString(), style: const TextStyle(fontSize: 18)),
-                            // Text("التاسكات المنفذة: " + allTask.toString() + "/"+targetViewModel.allTarget.length.toString(), style: const TextStyle(fontSize: 18)),
-                            // Row(
-                            //   children: [
-                            //     Text("حقق التارغيت:", style: const TextStyle(fontSize: 18)),
-                            //     SizedBox(width: 5,),
-                            //     Icon(isHitTarget?Icons.check:Icons.cancel,color: isHitTarget?Colors.green:Colors.red,),
-                            //   ],
-                            // )
+
                           ],
                         ),
                       ),

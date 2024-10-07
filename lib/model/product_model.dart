@@ -1,7 +1,8 @@
 import 'package:ba3_business_solutions/Const/const.dart';
 import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
 import 'package:ba3_business_solutions/model/product_record_model.dart';
-import 'package:ba3_business_solutions/utils/hive.dart';
+
+import '../controller/product_view_model.dart';
 
 class ProductModel {
   String? prodId, prodName, prodCode, prodFullCode, prodCustomerPrice, prodWholePrice, prodRetailPrice, prodCostPrice, prodMinPrice, prodAverageBuyPrice,prodAllQuantity, prodBarcode, prodGroupCode, prodType, prodParentId;
@@ -204,7 +205,7 @@ class ProductModel {
       'رمز المادة': prodFullCode.toString(),
       'اسم المادة': prodName.toString(),
       // 'prodCode': prodCode,
-      'اسم الاب': getProductNameFromIdIsolate(prodParentId),
+      'اسم الاب': getProductNameFromId(prodParentId),
       'سعر المستهلك': prodCustomerPrice.toString(),
       'سعر الجملة': prodWholePrice.toString(),
       'سعر المبيع': prodRetailPrice.toString(),

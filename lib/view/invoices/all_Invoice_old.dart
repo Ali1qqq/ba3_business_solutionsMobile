@@ -1,11 +1,12 @@
+/*
 import 'package:ba3_business_solutions/controller/invoice_view_model.dart';
-import 'package:ba3_business_solutions/view/invoices/invoice_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import '../../Widgets/Discount_Pluto_Edit_View_Model.dart';
+import '../../Widgets/Invoice_Pluto_Edit_View_Model.dart';
 import '../accounts/acconts_view_old.dart';
+import 'New_Invoice_View.dart';
 
 class AllInvoiceOLD extends StatelessWidget {
   const AllInvoiceOLD({super.key});
@@ -55,7 +56,10 @@ class AllInvoiceOLD extends StatelessWidget {
                         Get.to(() => InvoiceView(
                               billId: model,
                               patternId: "",
-                            ));
+                            )  ,  binding: BindingsBuilder(() {
+                          Get.lazyPut(() => InvoicePlutoViewModel());
+                          Get.lazyPut(() => DiscountPlutoViewModel());
+                        }),);
                       },
                       columns: <GridColumn>[
                         GridColumn(
@@ -90,3 +94,4 @@ class AllInvoiceOLD extends StatelessWidget {
             ));
   }
 }
+*/

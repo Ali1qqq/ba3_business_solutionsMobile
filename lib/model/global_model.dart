@@ -1,23 +1,17 @@
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
-
 import 'package:ba3_business_solutions/model/entry_bond_record_model.dart';
 import 'package:ba3_business_solutions/model/invoice_discount_record_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 import '../Const/const.dart';
 import '../controller/account_view_model.dart';
 import '../controller/pattern_model_view.dart';
 import '../controller/sellers_view_model.dart';
 import '../controller/store_view_model.dart';
-import '../utils/hive.dart';
 import 'bond_record_model.dart';
 import 'cheque_rec_model.dart';
 import 'invoice_record_model.dart';
 
 class GlobalModel {
-  String?
-  globalId,
+  String? globalId,
       originAmenId,
       bondId,
       bondDescription,
@@ -40,23 +34,27 @@ class GlobalModel {
       originId,
       patternId,
       invCode,
+      invReturnCode,
+      invReturnDate,
       invSeller,
       invDate,
       invVatAccount,
       invCustomerAccount,
       invPayType,
+      invDueDate,
       invSecStorehouse,
-      globalType;
-  double? invTotal;
+      globalType,
+      invPartnerCode;
+  double? invTotal, invTotalPartner;
   double? discountTotal;
   double? addedTotal;
   double? firstPay;
   List<BondRecordModel>? bondRecord = [];
   List<InvoiceRecordModel>? invRecords = [];
   List<InvoiceDiscountRecordModel>? invDiscountRecord = [];
-  bool? invIsPending;
+  bool? invIsPending, invIsPaid;
 
-  String? cheqId, cheqName, cheqAllAmount, cheqRemainingAmount, cheqPrimeryAccount, cheqSecoundryAccount, cheqCode, cheqDate, cheqStatus, cheqType, cheqBankAccount;
+  String? cheqId, cheqName, cheqAllAmount, cheqRemainingAmount, cheqPrimeryAccount, cheqSecoundryAccount, cheqCode, cheqDate, cheqStatus, cheqType, cheqBankAccount,cheqDeuDate;
 
   String? entryBondId, entryBondCode;
 
@@ -67,6 +65,13 @@ class GlobalModel {
   Map<String, dynamic> toJson() {
     return {
       if (globalId != null) 'globalId': globalId,
+      if (invTotalPartner != null) 'invTotalPartner': invTotalPartner,
+      if (invDueDate != null) 'invDueDate': invDueDate,
+      if (invDueDate != null) 'cheqDeuDate': cheqDeuDate,
+      if (invIsPaid != null) 'invIsPaid': invIsPaid,
+      if (invPartnerCode != null) 'invPartnerCode': invPartnerCode,
+      if (invReturnCode != null) 'invReturnCode': invReturnCode,
+      if (invReturnDate != null) 'invReturnDate': invReturnDate,
       if (addedTotal != null) 'addedTotal': addedTotal,
       if (firstPay != null) 'firstPay': firstPay,
       if (discountTotal != null) 'discountTotal': discountTotal,
@@ -127,7 +132,12 @@ class GlobalModel {
   Map<String, dynamic> toFullJson() {
     return {
       if (globalId != null) 'globalId': globalId,
+      if (invTotalPartner != null) 'invTotalPartner': invTotalPartner,
+      if (invDueDate != null) 'invDueDate': invDueDate,
+      if (invDueDate != null) 'cheqDeuDate': cheqDeuDate,
+      if (invPartnerCode != null) 'invPartnerCode': invPartnerCode,
       if (addedTotal != null) 'addedTotal': addedTotal,
+      if (invIsPaid != null) 'invIsPaid': invIsPaid,
       if (firstPay != null) 'firstPay': firstPay,
       if (invId != null) 'invId': invId,
       if (originAmenId != null) 'originAmenId': originAmenId,
@@ -135,6 +145,8 @@ class GlobalModel {
       if (bondDescription != null) 'bondDescription': bondDescription,
       if (bondTotal != null) 'bondTotal': bondTotal,
       if (bondDate != null) 'bondDate': bondDate,
+      if (invReturnDate != null) 'invReturnDate': invReturnDate,
+      if (invReturnCode != null) 'invReturnCode': invReturnCode,
       if (bondCode != null) 'bondCode': bondCode,
       if (bondType != null) 'bondType': bondType,
       if (discountTotal != null) 'discountTotal': discountTotal,
@@ -194,21 +206,28 @@ class GlobalModel {
       }
     },);*/
     List<BondRecordModel>? bondRecordList = json['bondRecord'] == null ? [] : json['bondRecord']?.map<BondRecordModel>((dynamic e) => BondRecordModel.fromJson(e)).toList();
-    List<InvoiceRecordModel>?  invRecordList = json['invRecords'] == null ? [] : json['invRecords']?.map<InvoiceRecordModel>((dynamic e) => InvoiceRecordModel.fromJson(e)).toList();
+    List<InvoiceRecordModel>? invRecordList = json['invRecords'] == null ? [] : json['invRecords']?.map<InvoiceRecordModel>((dynamic e) => InvoiceRecordModel.fromJson(e)).toList();
     List<ChequeRecModel>? cheqRecord = json['cheqRecords'] == null ? [] : json['cheqRecords']?.map<ChequeRecModel>((dynamic e) => ChequeRecModel.fromJson(e)).toList();
     List<EntryBondRecordModel>? entryBondRecord = json['entryBondRecord'] == null ? [] : json['entryBondRecord']?.map<EntryBondRecordModel>((dynamic e) => EntryBondRecordModel.fromJson(e)).toList();
     List<InvoiceDiscountRecordModel>? invDiscountRecord = json['invDiscountRecord'] == null ? [] : json['invDiscountRecord']?.map<InvoiceDiscountRecordModel>((dynamic e) => InvoiceDiscountRecordModel.fromJson(e)).toList();
     return GlobalModel(
       globalId: json['globalId'],
       bondId: json['bondId'],
+      invTotalPartner: json['invTotalPartner'],
+      invPartnerCode: json['invPartnerCode'],
       discountTotal: json['discountTotal'],
+      cheqDeuDate: json['cheqDeuDate'],
       firstPay: json['firstPay'],
       addedTotal: json['addedTotal'],
+      invIsPaid: json['invIsPaid'] ?? json['invPayType']== Const.invPayTypeCash?true:false,
       originAmenId: json['originAmenId'],
       bondDescription: json['bondDescription'],
       bondTotal: json['bondTotal'],
+      invDueDate: json['invDueDate'] ?? json['bondDate'] ?? json['invDate'] ?? '',
       bondDate: json['bondDate'],
       bondCode: json['bondCode'],
+      invReturnCode: json['invReturnCode'],
+      invReturnDate: json['invReturnDate'],
       bondType: json['bondType'],
       bondRecord: bondRecordList,
       invId: json['invId'],
@@ -402,6 +421,12 @@ class GlobalModel {
   GlobalModel({
     this.globalId,
     this.bondId,
+    this.invPartnerCode,
+    this.invTotalPartner,
+    this.invReturnDate,
+    this.cheqDeuDate,
+    this.invReturnCode,
+    this.invIsPaid,
     this.originAmenId,
     this.bondDescription,
     this.bondTotal,
@@ -409,6 +434,7 @@ class GlobalModel {
     this.bondCode,
     this.bondRecord,
     this.bondType,
+    this.invDueDate,
     this.invId,
     this.invName,
     this.invTotal,
@@ -456,53 +482,108 @@ class GlobalModel {
   });
 
   Map<String, dynamic> toMap({String? type}) {
-
-    if ( type == Const.globalTypeInvoice) {
+    if (type == Const.globalTypeInvoice) {
       return {
-        "الرقم التسلسلي": invId??'',
-        "الرمز": invCode??'',
-        "النمط": getPatModelFromPatternId(patternId).patName??'',//Isolate
-        "التاريخ": invDate??'',
-        "نوع الفاتورة": getInvPayTypeFromEnum(invPayType ?? "")??'',
+        "الرقم التسلسلي": invId ?? '',
+        "الرمز": invCode ?? '',
+        "النمط": getPatModelFromPatternId(patternId).patName ?? '', //Isolate
+        "التاريخ": invDate ?? '',
+        "تاريخ الاستحقاق": invDueDate ?? '',
+        "نوع الفاتورة": getInvPayTypeFromEnum(invPayType ?? ""),
         'المجموع الكلي': (invTotal ?? 0).toStringAsFixed(2),
-        'المستودع': getStoreNameFromId(invStorehouse),//Isolate
-        'الحساب الاول': getAccountNameFromId(invPrimaryAccount),//Isolate
-        'الحساب الثاني': getAccountNameFromId(invSecondaryAccount),//Isolate
-        "رقم جوال العميل": invMobileNumber??'',
-        "حساب العميل": getAccountNameFromId(invCustomerAccount),//Isolate
-        'النوع': getInvTypeFromEnum(invType ?? ""),
-        "حساب البائع": getSellerNameFromId(invSeller),//Isolate
-        'وصف': invComment??'',
-      };
+        'المستودع': getStoreNameFromId(invStorehouse), //Isolate
+        'دائن': getAccountNameFromId(invPrimaryAccount), //Isolate
+        'مدين': getAccountNameFromId(invSecondaryAccount), //Isolate
+        "رقم جوال العميل": invMobileNumber ?? '',
 
-    } else if ( type == Const.globalTypeBond) {
+        "حساب العميل": getAccountNameFromId(invCustomerAccount), //Isolate
+        'النوع': getInvTypeFromEnum(invType ?? ""),
+        "حساب البائع": getSellerNameFromId(invSeller), //Isolate
+        'وصف': invComment ?? '',
+      };
+    } else if (type == Const.globalTypeBond) {
       return {
-        'bondId':bondId?? entryBondId,
+        'bondId': bondId ?? entryBondId,
         'رقم السند': bondCode,
         // 'AmenCode': originAmenId,
         'نوع السند': getBondTypeFromEnum(bondType ?? ""),
         'تاريخ السند': bondDate,
-        'القيمة': bondRecord?.map((e) => e.bondRecDebitAmount!,).toList().fold(0.0, (previousValue, element) => previousValue+element,)??'',
+        'القيمة': bondRecord
+                ?.map(
+                  (e) => e.bondRecDebitAmount!,
+                )
+                .toList()
+                .fold(
+                  0.0,
+                  (previousValue, element) => previousValue + element,
+                ) ??
+            '',
         'البيان': bondDescription,
-        "الحسابات المتأثرة":bondRecord?.map((e) => getAccountNameFromId(e.bondRecAccount),).toList()??''
-
+        "الحسابات المتأثرة": bondRecord
+                ?.map(
+                  (e) => getAccountNameFromId(e.bondRecAccount),
+                )
+                .toList() ??
+            ''
       };
-    } else if ( type == Const.globalTypeCheque) {
+    } else if (type == Const.globalTypeCheque) {
       return {
         'cheqId': cheqId,
-        'cheqName': cheqName,
-        'cheqAllAmount': cheqAllAmount,
-        'cheqRemainingAmount': cheqRemainingAmount,
-        'cheqPrimeryAccount': cheqPrimeryAccount,
-        'cheqSecoundryAccount': cheqSecoundryAccount,
-        'cheqCode': cheqCode,
-        'cheqDate': cheqDate,
-        'cheqStatus': cheqStatus,
-        'cheqType': cheqType,
-        'cheqBankAccount': cheqBankAccount,
+        'رقم الشيك': cheqName,
+
+        // 'نوع الشيك ورقمه': cheqName,
+        'القيمة': cheqAllAmount,
+        'تاريخ الاستحقاق': cheqDate!.split(" ")[0],
+        // 'cheqRemainingAmount': cheqRemainingAmount,
+        'حساب الورقة': getAccountNameFromId(cheqPrimeryAccount),
+        'الحساب المقابل': getAccountNameFromId(cheqSecoundryAccount),
+
+        'حالة الشيك': cheqStatus.toString(),
+        'نوع الشيك': getChequeTypeFromEnum(cheqType.toString()),
+        'اسم البنك': getAccountNameFromId(cheqBankAccount),
       };
-    } else {
-      print("UNKNOW TYPE");
+    } else if (type == Const.globalTypeAccountDue) {
+      return {
+        "الرقم التسلسلي": invId ?? '',
+        "الرمز": invCode ?? '',
+        "النمط": getPatModelFromPatternId(patternId).patFullName ?? '', //Isolate
+        "التاريخ": invDate?.split(" ")[0] ?? '',
+        "تاريخ الاستحقاق": invDueDate?.split("T")[0] ?? '',
+        // "حالة الفاتورة":invIsPaid,
+        // "نوع الفاتورة": getInvPayTypeFromEnum(invPayType ?? ""),
+        'المجموع الكلي': (invTotal ?? 0).toStringAsFixed(2),
+        'المستودع': getStoreNameFromId(invStorehouse), //Isolate
+        'دائن': getAccountNameFromId(invPrimaryAccount), //Isolate
+        'مدين': getAccountNameFromId(invSecondaryAccount), //Isolate
+        "رقم جوال العميل": invMobileNumber ?? '',
+        'النوع': getInvTypeFromEnum(invType ?? ""),
+        'وصف': invComment ?? '',
+      };
+    } else if (type == Const.globalTypeStartersBond) {
+      return {
+        'bondId': entryBondId,
+        'رقم السند': entryBondCode??0,
+        // 'AmenCode': originAmenId,
+        'تاريخ السند': bondDate??invDate,
+        'القيمة': bondRecord
+            ?.map(
+              (e) => e.bondRecDebitAmount!,
+        )
+            .toList()
+            .fold(
+          0.0,
+              (previousValue, element) => previousValue + element,
+        ) ??
+            '',
+        'البيان': bondDescription,
+        "الحسابات المتأثرة": entryBondRecord
+            ?.map(
+              (e) => getAccountNameFromId(e.bondRecAccount),
+        )
+            .toList() ??
+            ''
+      };
+    }else {
       return toFullJson();
     }
   }

@@ -14,7 +14,6 @@ class DiscountPlutoViewModel extends GetxController {
       Map<PlutoColumn, dynamic> sampleData = InvoiceDiscountRecordModel().toEditedMap();
       columns = sampleData.keys.toList();
     }
-    update();
     return columns;
   }
 
@@ -34,16 +33,12 @@ class DiscountPlutoViewModel extends GetxController {
         return PlutoRow(cells: cells);
       }).toList();
     }
-    update();
     return rows;
   }
 
   List<PlutoRow> rows = [];
   late PlutoGridStateManager stateManager = PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
-
   List<PlutoColumn> columns = [];
-
-
 
   void updateCellValue(String field, dynamic value) {
     stateManager.changeCellValue(

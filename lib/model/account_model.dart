@@ -1,5 +1,5 @@
 import 'package:ba3_business_solutions/Const/const.dart';
-import 'package:ba3_business_solutions/controller/isolate_view_model.dart';
+import 'package:ba3_business_solutions/model/AccountCustomer.dart';
 import 'package:ba3_business_solutions/model/account_record_model.dart';
 
 import '../controller/account_view_model.dart';
@@ -10,9 +10,22 @@ class AccountModel {
   List accChild = [];
   List accAggregateList = [];
   List<AccountRecordModel> accRecord = [];
-  double? finalBalance ;
+  List<AccountCustomer>? accCustomer = [];
+  double? finalBalance, fFinalBalance;
 
-  AccountModel({this.accId, this.accName, this.accComment, this.accVat, this.accType, this.accCode, this.accParentId, this.accIsParent, this.finalBalance});
+  AccountModel({
+    this.accId,
+    this.accName,
+    this.accComment,
+    this.accVat,
+    this.accType,
+    this.accCode,
+    this.accParentId,
+    this.accIsParent,
+    this.finalBalance,
+    this.fFinalBalance,
+    this.accCustomer,
+  });
 
   AccountModel.fromJson(Map<dynamic, dynamic> map) {
     accId = map['accId'];
@@ -21,10 +34,25 @@ class AccountModel {
     accType = map['accType'];
     accCode = map['accCode'];
     accVat = map['accVat'];
+
     ///this is new
     finalBalance = map['finalBalance'];
+    fFinalBalance = map['fFinalBalance'];
+    fFinalBalance = map['fFinalBalance'];
     accParentId = map['accParentId'];
     accIsParent = map['accIsParent'];
+    if (map['accCustomer'] != null && map['accCustomer'] != []) {
+      map['accCustomer'].forEach((element) {
+            if (element.runtimeType == AccountCustomer) {
+              accCustomer!.add(element);
+            } else {
+              accCustomer!.add(AccountCustomer.fromJson(element));
+            }
+          }) ??
+          [];
+    } else {
+      accCustomer = [];
+    }
     if (map['accRecord'] != null && map['accRecord'] != []) {
       map['accRecord'].forEach((element) {
             if (element.runtimeType == AccountRecordModel) {
@@ -99,17 +127,24 @@ class AccountModel {
 
   toJson() {
     return {
-      'accId': accId,
-      'accName': accName,
-      'accComment': accComment,
-      'accType': accType,
-      'accCode': accCode,
-      'accVat': accVat,
-      'accParentId': accParentId,
-      'accIsParent': accIsParent,
-      'accChild': accChild,
-      'accAggregateList': accAggregateList,
-      'finalBalance': finalBalance,
+      if (accId != null) 'accId': accId,
+      if (accName != null) 'accName': accName,
+      if (accComment != null) 'accComment': accComment,
+      if (accType != null) 'accType': accType,
+      if (accCode != null) 'accCode': accCode,
+      if (accVat != null) 'accVat': accVat,
+      if (accCustomer != null)
+        'accCustomer': accCustomer
+            ?.map(
+              (e) => e.toJson(),
+            )
+            .toList(),
+      if (accParentId != null) 'accParentId': accParentId,
+      if (accIsParent != null) 'accIsParent': accIsParent,
+      if (accChild.isNotEmpty) 'accChild': accChild,
+      if (accAggregateList.isNotEmpty) 'accAggregateList': accAggregateList,
+      if (finalBalance != null) 'finalBalance': finalBalance,
+      if (fFinalBalance != null) 'fFinalBalance': fFinalBalance,
     };
   }
 
@@ -121,6 +156,13 @@ class AccountModel {
       'accType': accType,
       'accCode': accCode,
       'accVat': accVat,
+      if (accCustomer != null)
+        'accCustomer': accCustomer
+            ?.map(
+              (e) => e.toJson(),
+            )
+            .toList(),
+      'fFinalBalance': fFinalBalance,
       'accParentId': accParentId,
       'accIsParent': accIsParent,
       'accChild': accChild,
@@ -133,14 +175,16 @@ class AccountModel {
   Map<String, dynamic> toMap() {
     return {
       'accId': accId,
-      'رمز الحساب': int.tryParse(accCode.toString()) ?? 0,
+      'رمز الحساب': accCode,
       'اسم الحساب': accName,
-      'نوع الحساب': getAccountTypefromEnum(accType ?? ""),
+      'نوع الحساب': getAccountTypeFromEnum(accType ?? ""),
       'نوع الضريبة': accVat,
       'حساب الاب': getAccountNameFromId(accParentId),
-      'الوصف': accComment,
+      'الزبائن': accCustomer!.map((e) =>e.customerAccountName!,).toList().join(' , '),
+      'الاولاد': accChild.map((e) =>getAccountNameFromId(e),).toList().join(' , '),
+      // 'الوصف': accComment,
       // 'الرصيد': getAccountBalanceFromId(accId),
-      'الرصيد':finalBalance,
+      'الرصيد': finalBalance,
     };
   }
 }

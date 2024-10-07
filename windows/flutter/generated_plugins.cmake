@@ -4,12 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
-  bitsdojo_window_windows
   cloud_firestore
   firebase_core
   flutter_platform_alert
-  flutter_window_close
-  smart_auth
+  geolocator_windows
+  permission_handler_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

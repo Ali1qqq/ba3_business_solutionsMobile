@@ -33,7 +33,7 @@ class FilePickerWidget extends StatelessWidget {
                     });
                   }
               ),
-              SizedBox(height: 50,),
+              const SizedBox(height: 50,),
               ElevatedButton(
                 onPressed: () {
                   if(separator!=null){
@@ -46,9 +46,9 @@ class FilePickerWidget extends StatelessWidget {
                     Get.snackbar("error", "plz select separator");
                   }
                 },
-                child: Text("استيراد"),
+                child: const Text("استيراد"),
               ),
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               ElevatedButton(
                 onPressed: () {
                   if(separator!=null){
@@ -59,9 +59,9 @@ class FilePickerWidget extends StatelessWidget {
                     Get.snackbar("error", "plz select separator");
                   }
                 },
-                child: Text("سندات"),
+                child: const Text("سندات"),
               ),
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               ElevatedButton(
                 onPressed: () {
                   if(separator!=null){
@@ -72,9 +72,9 @@ class FilePickerWidget extends StatelessWidget {
                     Get.snackbar("error", "plz select separator");
                   }
                 },
-                child: Text("فواتير"),
+                child: const Text("فواتير"),
               ),
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               ElevatedButton(
                 onPressed: () {
                   if(separator!=null){
@@ -83,16 +83,24 @@ class FilePickerWidget extends StatelessWidget {
                     Get.snackbar("error", "plz select separator");
                   }
                 },
-                child: Text("سندات القيد"),
+                child: const Text("تصحيح الفواتير"),
               ),
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               ElevatedButton(
                 onPressed: () {
-
                     importViewModel.syncLocalAndFireBase();
-
+                    // importViewModel.pickNewType(separator);
                 },
                 child: const Text("مزامنة"),
+              ),
+              const SizedBox(height: 30,),
+              ElevatedButton(
+                onPressed: () {
+                  print("free");
+                  // importViewModel.pickStarterBondFile(separator);
+                  importViewModel.pickStarterBondFileFree(separator);
+                },
+                child: const Text("سندات القيد"),
               ),
             ],
           ),

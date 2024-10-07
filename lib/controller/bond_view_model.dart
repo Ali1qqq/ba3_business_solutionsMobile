@@ -1,4 +1,6 @@
+
 import 'package:ba3_business_solutions/Const/const.dart';
+import 'package:ba3_business_solutions/Widgets/Bond_Record_Pluto_View_Model.dart';
 import 'package:ba3_business_solutions/controller/account_view_model.dart';
 import 'package:ba3_business_solutions/controller/global_view_model.dart';
 import 'package:ba3_business_solutions/model/global_model.dart';
@@ -16,11 +18,15 @@ class BondViewModel extends GetxController {
   late BondRecordDataSource recordDataSource;
   late DataGridController dataGridController;
   late CustomBondRecordDataSource customBondRecordDataSource;
+  final TextEditingController noteController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController codeController = TextEditingController();
+  final TextEditingController debitOrCreditController = TextEditingController();
   String? lastBondOpened;
-  late GlobalModel bondModel;
+   GlobalModel bondModel=GlobalModel();
   RxMap<String, GlobalModel> allBondsItem = <String, GlobalModel>{}.obs;
   bool isEdit = false;
-  late GlobalModel tempBondModel;
+   GlobalModel tempBondModel=GlobalModel();
   Map<String, String> codeList = {};
   TextEditingController userAccountController = TextEditingController();
 
@@ -46,15 +52,17 @@ class BondViewModel extends GetxController {
   // }
 
   initGlobalBond(GlobalModel globalModel) {
+    // if(globalModel.bondCode)
+
     allBondsItem[globalModel.bondId!] = globalModel;
     // tempBondModel=GlobalModel.fromJson(globalModel.toFullJson());
     // initPage();
 
-    if (lastBondOpened != null) {
+/*    if (lastBondOpened != null) {
       tempBondModel = GlobalModel.fromJson(allBondsItem[lastBondOpened]?.toFullJson());
-      initPage(tempBondModel.bondType);
+      // initPage(tempBondModel.bondType);
     }
-    update();
+    update();*/
     // if(oldBondModel!=null){
     //   tempBondModel = GlobalModel.fromJson(globalModel.toFullJson());
     //   initPage();
@@ -309,11 +317,11 @@ class BondViewModel extends GetxController {
 
   void deleteBondById(String? bondId) {
     allBondsItem.removeWhere((key, value) => key == bondId);
-    initPage(tempBondModel.bondType);
+    // initPage(tempBondModel.bondType);
     update();
   }
 
-  void deleteOneRecord(int rowIndex) {
+/*  void deleteOneRecord(int rowIndex) {
     tempBondModel.bondRecord?.removeAt(rowIndex);
     // updateBond();
     for (var i = 0; i < tempBondModel.bondRecord!.length; i++) {
@@ -323,41 +331,65 @@ class BondViewModel extends GetxController {
     initPage(tempBondModel.bondType);
     isEdit = true;
     update();
-  }
+  }*/
+  bool isNew = false;
 
-   initPage(type) {
-    initTotal();
-    if (tempBondModel.bondType ==getBondTypeFromEnum(Const.bondTypeDaily) || tempBondModel.bondType == getBondTypeFromEnum(Const.bondTypeStart) || tempBondModel.bondType == getBondTypeFromEnum(Const.bondTypeInvoice)
-   || tempBondModel.bondType ==Const.bondTypeDaily || tempBondModel.bondType == Const.bondTypeStart || tempBondModel.bondType == Const.bondTypeInvoice
-    ) {
+  initPage({String? oldId, String? type}) {
+    final plutoEditViewModel = Get.find<BondRecordPlutoViewModel>();
+    initCodeList(type);
+    if (oldId != null) {
+      tempBondModel = allBondsItem[oldId]!;
+      bondModel = allBondsItem[oldId]!;
+      codeController.text = tempBondModel.bondCode!;
+      dateController.text = tempBondModel.bondDate!.split(" ")[0];
+      noteController.text = tempBondModel.bondDescription ?? '';
 
-      recordDataSource = BondRecordDataSource(recordData: tempBondModel);
-      ///i add it
-      customBondRecordDataSource = CustomBondRecordDataSource(recordData: tempBondModel, oldisDebit: tempBondModel.bondType == Const.bondTypeDebit);
+      if (tempBondModel.bondType == Const.bondTypeCredit) {
+        debitOrCreditController.text = getAccountNameFromId(tempBondModel.bondRecord?.last.bondRecAccount);
+        plutoEditViewModel.getRows(
+            tempBondModel.bondRecord
+                    ?.where(
+                      (element) => (element.bondRecCreditAmount ?? 0) > 0,
+                    )
+                    .toList() ??
+                [],
+            type!);
+      } else if (tempBondModel.bondType == Const.bondTypeDebit) {
 
-    } else {
-
-      if ((tempBondModel.bondRecord!.length) > 1) {
-        var aa = tempBondModel.bondRecord
-            ?.where(
-              (element) => element.bondRecId == "X",
-            )
-            .first
-            .bondRecAccount;
-        // var _ = accountController.accountList.values.toList().firstWhere((e) => e.accId == bondController.tempBondModel.bondRecord?[0].bondRecAccount).accName;
-        userAccountController.text = getAccountNameFromId(aa);
-        // tempBondModel.bondRecord?.removeWhere(
-        //       (element) => element.bondRecId == "X",
-        // );
+        debitOrCreditController.text = getAccountNameFromId(tempBondModel.bondRecord?.last.bondRecAccount);
+        plutoEditViewModel.getRows(
+            tempBondModel.bondRecord
+                    ?.where(
+                      (element) => (element.bondRecDebitAmount ?? 0) > 0,
+                    )
+                    .toList() ??
+                [],
+            type!);
+      } else {
+        debitOrCreditController.text = "";
+        plutoEditViewModel.getRows(tempBondModel.bondRecord?.toList() ?? [], type!);
       }
+      isNew = false;
+    } else {
+      plutoEditViewModel.getRows([], type!);
+      tempBondModel = GlobalModel();
+      codeController.text = getNextBondCode(type: type);
+      dateController.text = '';
+      noteController.text = '';
 
-      customBondRecordDataSource = CustomBondRecordDataSource(recordData: tempBondModel, oldisDebit: tempBondModel.bondType == Const.bondTypeDebit);
+      debitOrCreditController.text = '';
+      isNew = true;
     }
-    dataGridController = DataGridController();
+    tempBondModel.bondType = type;
 
-    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
-      update();
-    });
+    // newCodeController.text = (int.parse(bondController.allBondsItem.values.lastOrNull?.bondCode ?? "0") + 1).toString();
+    // while (bondController.allBondsItem.values.toList().map((e) => e.bondCode).toList().contains(newCodeController.text)) {
+    //
+    // }
+WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
+  update();
+
+},);
   }
 
   void initTotal() {
@@ -493,19 +525,90 @@ class BondViewModel extends GetxController {
 
   initCodeList(type) {
     codeList = {};
-    for (var element in allBondsItem.values.where((e) => !e.bondCode!.contains("F-") && !e.bondCode!.contains("G-"))) {
-      if (element.bondType == type) {
-        codeList[element.bondCode!] = element.bondId!;
+    for (var element in allBondsItem.values) {
+      if ((element.bondType!) == type) {
+        codeList[element.bondCode ?? '0'] = element.bondId!;
       }
     }
+
     codeList = Map.fromEntries(codeList.entries.toList()
       ..sort(
-        (a, b) => int.parse(a.key).compareTo(int.parse(b.key)),
+        (a, b) {
+          if (a.key.startsWith("F") && b.key.startsWith("F")) {
+            return int.parse((a.key).split("F-")[1]).compareTo(int.parse((b.key).split("F-")[1]));
+          } else if (a.key.startsWith("F")) {
+            return int.parse((a.key).split("F-")[1]).compareTo(int.parse(b.key));
+          } else if (b.key.startsWith("F")) {
+            return int.parse((a.key)).compareTo(int.parse((b.key).split("F-")[1]));
+          } else {
+            return int.parse(a.key).compareTo(int.parse(b.key));
+          }
+        },
       ));
   }
 
+  getBondByCode(String bondType, bondCode) {
+    List<GlobalModel> bond = allBondsItem.values.where((element) => element.globalType == Const.globalTypeBond && element.bondType == bondType && element.bondCode == bondCode).toList();
+    if (bond.isNotEmpty) {
+      initPage(oldId: bond.first.bondId!, type: bond.first.bondType!);
+    } else {
+      Get.snackbar("خطأ رقم السند", "رقم السند غير موجود",
+          icon: const Icon(
+            Icons.error,
+            color: Colors.red,
+            textDirection: TextDirection.rtl,
+          ));
+      codeController.text = tempBondModel.bondCode ?? "";
+    }
+
+    update();
+  }
+
+  bondNextOrPrev(String bondType, bool isPrev) {
+    List<GlobalModel> bond = allBondsItem.values.where((element) => element.globalType == Const.globalTypeBond && element.bondType == bondType).toList().reversed.toList();
+    // log(bond.map((e) => [e.bondCode.toString(),e.bondId.toString()],).toList().toString());
+    bond.sort(
+      (a, b) {
+        if (a.bondCode!.startsWith("F") && b.bondCode!.startsWith("F")) {
+          return int.parse((a.bondCode ?? "F-0").split("F-")[1]).compareTo(int.parse((b.bondCode ?? "F-0").split("F-")[1]));
+        } else if (a.bondCode!.startsWith("F")) {
+          return int.parse((a.bondCode ?? "F-0").split("F-")[1]).compareTo(int.parse(b.bondCode ?? "0"));
+        } else if (b.bondCode!.startsWith("F")) {
+          return int.parse((a.bondCode ?? "0")).compareTo(int.parse((b.bondCode ?? "F-0").split("F-")[1]));
+        } else {
+          return int.parse(a.bondCode ?? "0").compareTo(int.parse(b.bondCode ?? "0"));
+        }
+      },
+    );
+    int currentPosition = bond.indexOf(bond
+            .where(
+              (element) => element.bondCode == codeController.text,
+            )
+            .firstOrNull ??
+        bond.last);
+
+    if (isPrev) {
+      if (currentPosition != 0) {
+        if (bond
+            .where(
+              (element) => element.bondCode == codeController.text,
+            )
+            .isNotEmpty) {
+          initPage(oldId: bond[currentPosition - 1].bondId!, type: bond[currentPosition - 1].bondType!);
+        } else {
+          initPage(oldId: bond.last.bondId!, type: bond.last.bondType!);
+        }
+      }
+    } else {
+      if (currentPosition < bond.length - 1) {
+        initPage(oldId: bond[currentPosition + 1].bondId!, type: bond[currentPosition + 1].bondType!);
+      }
+    }
+    update();
+  }
+
   prevBond() {
-    initCodeList(tempBondModel.bondType!);
+    /* initCodeList(tempBondModel.bondType!);
     var index = codeList.values.toList().indexOf(tempBondModel.bondId!);
     if (codeList.values.toList().first == codeList.values.toList()[index]) {
     } else {
@@ -526,11 +629,11 @@ class BondViewModel extends GetxController {
         initPage(tempBondModel.bondType);
         update();
       }
-    }
+    }*/
   }
 
   firstBond() {
-    initCodeList(tempBondModel.bondType!);
+    /*   initCodeList(tempBondModel.bondType!);
     var index = codeList.values.toList().indexOf(tempBondModel.bondId!);
     if (codeList.values.toList().first == codeList.values.toList()[index]) {
     } else {
@@ -551,11 +654,11 @@ class BondViewModel extends GetxController {
         initPage(tempBondModel.bondType);
         update();
       }
-    }
+    }*/
   }
 
   nextBond() {
-    var index = codeList.values.toList().indexOf(tempBondModel.bondId!);
+/*    var index = codeList.values.toList().indexOf(tempBondModel.bondId!);
     if (codeList.values.toList().last == codeList.values.toList()[index]) {
     } else {
       tempBondModel = GlobalModel.fromJson(allBondsItem[codeList.values.toList()[index + 1]]?.toFullJson());
@@ -575,11 +678,11 @@ class BondViewModel extends GetxController {
         initPage(tempBondModel.bondType);
         update();
       }
-    }
+    }*/
   }
 
   lastBond() {
-    var index = codeList.values.toList().indexOf(tempBondModel.bondId!);
+    /*  var index = codeList.values.toList().indexOf(tempBondModel.bondId!);
     if (codeList.values.toList().last == codeList.values.toList()[index]) {
     } else {
       tempBondModel = GlobalModel.fromJson(allBondsItem[codeList.values.toList().last]?.toFullJson());
@@ -599,7 +702,7 @@ class BondViewModel extends GetxController {
         initPage(tempBondModel.bondType);
         update();
       }
-    }
+    }*/
   }
 
   String getNextBondCode({String? type}) {
@@ -608,7 +711,11 @@ class BondViewModel extends GetxController {
     if (codeList.isEmpty) {
       return "0";
     } else {
-      _ = int.parse(codeList.keys.last);
+      if (codeList.keys.last.startsWith("F")) {
+        _ = int.parse(codeList.keys.last.split("F-")[1]);
+      } else {
+        _ = int.parse(codeList.keys.last);
+      }
       while (codeList.containsKey(_.toString())) {
         _++;
       }

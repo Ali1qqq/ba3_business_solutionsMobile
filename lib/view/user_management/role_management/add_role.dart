@@ -1,9 +1,11 @@
 import 'package:ba3_business_solutions/controller/user_management_model.dart';
 import 'package:ba3_business_solutions/model/role_model.dart';
+import 'package:ba3_business_solutions/view/invoices/New_Invoice_View.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../Const/const.dart';
+import '../../widget/CustomWindowTitleBar.dart';
 
 
 class AddRoleView extends StatefulWidget {
@@ -40,11 +42,14 @@ TextEditingController nameController=TextEditingController();
             appBar: AppBar(
               title: Text(controller.roleModel?.roleName??"دور جديد"),
               actions: [
-                ElevatedButton(onPressed: (){
+
+                AppButton(title: controller.roleModel?.roleId==null?"إضافة":"تعديل", onPressed: (){
                   if(controller.roleModel?.roleName?.isNotEmpty??false) {
                     controller.addRole();
                   }
-                }, child: Text(controller.roleModel?.roleId==null?"إضافة":"تعديل"))
+                },  iconData: controller.roleModel?.roleId==null?Icons.add:Icons.edit)
+                ,
+                const SizedBox(width: 10),
               ],
             ),
             body: Padding(
