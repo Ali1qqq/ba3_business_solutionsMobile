@@ -8,7 +8,7 @@
 // import 'package:get/get.dart';
 // import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 //
-// import '../../../Const/const.dart';
+// import '../../../Const/app_constants.dart';
 // import '../../../Dialogs/Search_Product_Text_Dialog.dart';
 // import '../../../controller/invoice_view_model.dart';
 // import '../../../controller/product_view_model.dart';
@@ -557,7 +557,7 @@
 //           child: ListTile(
 //             title: Text(
 //               "الربح" + ": " + ((records[index].invRecSubTotal! + records[index].invRecVat!) - double.parse(productModel.prodCostPrice ?? "0")).toStringAsFixed(2),
-//               textDirection: TextDirection.rtl,
+//
 //             ),
 //           ),
 //         ),
@@ -566,7 +566,7 @@
 //           child: ListTile(
 //             title: Text(
 //               "نسبة الربح: ${((records[index].invRecSubTotal! + records[index].invRecVat! - double.parse(productModel.prodCostPrice ?? "0")) / double.parse(productModel.prodCostPrice ?? "0") * 100).toStringAsFixed(2)}%",
-//               textDirection: TextDirection.rtl,
+//
 //             ),
 //           ),
 //         ),
@@ -593,7 +593,7 @@
 //         leading: records[index].prodChoosePriceMethod == method ? Icon(Icons.check) : null,
 //         title: Text(
 //           text + ": " + getPrice(method, productModel.prodId).toStringAsFixed(2),
-//           textDirection: TextDirection.rtl,
+//
 //         ),
 //       ),
 //     );

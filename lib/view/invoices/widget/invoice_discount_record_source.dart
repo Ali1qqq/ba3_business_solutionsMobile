@@ -6,7 +6,7 @@
 // import 'package:get/get.dart';
 // import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 //
-// import '../../../Const/const.dart';
+// import '../../../Const/app_constants.dart';
 // import '../../../controller/invoice_view_model.dart';
 // import '../../../controller/product_view_model.dart';
 // import '../../../model/invoice_discount_record_model.dart';
@@ -311,7 +311,7 @@
 //         leading: Icon(Icons.delete,color: Colors.red,),
 //         title: Text(
 //           text,
-//           textDirection: TextDirection.rtl,
+//
 //         ),
 //       ),
 //     );

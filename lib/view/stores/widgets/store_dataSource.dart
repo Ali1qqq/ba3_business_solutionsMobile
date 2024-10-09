@@ -1,7 +1,7 @@
-import 'package:ba3_business_solutions/model/store_model.dart';
+import 'package:ba3_business_solutions/model/store/store_model.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../../../Const/const.dart';
+import '../../../core/constants/app_constants.dart';
 
 class StoreRecordDataSource extends DataGridSource {
   List<DataGridRow> dataGridRows = [];
@@ -13,9 +13,10 @@ class StoreRecordDataSource extends DataGridSource {
     dataGridRows = stores.values
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: "stId", value: e.stId),
-              DataGridCell<String>(columnName: Const.stCode, value: e.stCode),
               DataGridCell<String>(
-                  columnName: Const.stName, value: e.stName),
+                  columnName: AppConstants.stCode, value: e.stCode),
+              DataGridCell<String>(
+                  columnName: AppConstants.stName, value: e.stName),
             ]))
         .toList();
   }
@@ -28,17 +29,18 @@ class StoreRecordDataSource extends DataGridSource {
     Color getRowBackgroundColor() {
       final int index = effectiveRows.indexOf(row);
       if (index % 2 == 0) {
-        return  Colors.white;
+        return Colors.white;
       }
 
       return Colors.blue.withOpacity(0.5);
     }
+
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
       return Container(
           alignment: Alignment.center,
           color: getRowBackgroundColor(),
-          padding:const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             dataGridCell.value == null ? '' : dataGridCell.value.toString(),
             overflow: TextOverflow.ellipsis,
@@ -84,7 +86,7 @@ class StoreRecordDataSource extends DataGridSource {
 
   dynamic getValueByColumnName(DataGridRow row, String columnName) {
     final cell = row.getCells().firstWhere(
-            (element) => element.columnName == columnName,
+        (element) => element.columnName == columnName,
         orElse: () => DataGridCell<String>(columnName: columnName, value: ''));
     return cell.value;
   }

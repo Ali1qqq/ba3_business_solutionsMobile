@@ -1,9 +1,9 @@
-import 'package:ba3_business_solutions/controller/sellers_view_model.dart';
+import 'package:ba3_business_solutions/controller/seller/sellers_view_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../model/seller_model.dart';
+import '../../../model/seller/seller_model.dart';
 
 class DashboardChartWidget1 extends StatefulWidget {
   DashboardChartWidget1({super.key,});

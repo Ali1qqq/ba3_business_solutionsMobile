@@ -1,14 +1,17 @@
-import 'package:ba3_business_solutions/Const/const.dart';
+import 'package:ba3_business_solutions/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+import '../../../core/constants/app_strings.dart';
 
 class PreViewViewDataGridSource extends DataGridSource {
   List<DataGridRow> dataGridRows = [];
   dynamic newCellValue;
   TextEditingController editingController = TextEditingController();
 
-  PreViewViewDataGridSource({required List<List<String>> productList, required List<String> rows}) {
+  PreViewViewDataGridSource(
+      {required List<List<String>> productList, required List<String> rows}) {
     dataGridRows.clear();
     // dataGridRows = (productList ?? [])
     //     .map<DataGridRow>((e) => DataGridRow(cells: [
@@ -34,7 +37,8 @@ class PreViewViewDataGridSource extends DataGridSource {
         .map<DataGridRow>((e) => DataGridRow(
                 cells: List.generate(
               rows.length,
-              (index) => DataGridCell<String>(columnName: rows[index], value: e[index]),
+              (index) => DataGridCell<String>(
+                  columnName: rows[index], value: e[index]),
             )))
         .toList();
   }
@@ -57,7 +61,8 @@ class PreViewViewDataGridSource extends DataGridSource {
                     activeColor: Colors.amber,
                     value: dataGridCell.value,
                     onChanged: (_) {
-                      dataGridCell = DataGridCell<bool>(columnName: Const.rowImportHasVat, value: _);
+                      dataGridCell = DataGridCell<bool>(
+                          columnName: AppConstants.rowImportHasVat, value: _);
                     }),
               ),
       );
@@ -65,22 +70,28 @@ class PreViewViewDataGridSource extends DataGridSource {
   }
 
   @override
-  Future<bool> canSubmitCell(DataGridRow dataGridRow, RowColumnIndex rowColumnIndex, GridColumn column) async {
+  Future<bool> canSubmitCell(DataGridRow dataGridRow,
+      RowColumnIndex rowColumnIndex, GridColumn column) async {
     // Return false, to retain in edit mode.
     return true; // or super.canSubmitCell(dataGridRow, rowColumnIndex, column);
   }
 
   @override
-  Widget? buildEditWidget(DataGridRow dataGridRow, RowColumnIndex rowColumnIndex, GridColumn column, CellSubmit submitCell) {
+  Widget? buildEditWidget(DataGridRow dataGridRow,
+      RowColumnIndex rowColumnIndex, GridColumn column, CellSubmit submitCell) {
     // Text going to display on editable widget
-    var displayText = dataGridRows[rowColumnIndex.rowIndex].getCells()[rowColumnIndex.columnIndex].value;
+    var displayText = dataGridRows[rowColumnIndex.rowIndex]
+        .getCells()[rowColumnIndex.columnIndex]
+        .value;
     displayText ??= '';
     // The new cell value must be reset.
     // To avoid committing the [DataGridCell] value that was previously edited
     // into the current non-modified [DataGridCell].
     newCellValue = null;
 
-    final bool isNumericType = column.columnName == Const.rowBondId || column.columnName == Const.rowBondCreditAmount || column.columnName == Const.rowBondDebitAmount;
+    final bool isNumericType = column.columnName == AppStrings.rowBondId ||
+        column.columnName == AppStrings.rowBondCreditAmount ||
+        column.columnName == AppStrings.rowBondDebitAmount;
 
     // Holds regular expression pattern based on the column type.
     // final RegExp regExp = _getRegExp(isNumericType, column.columnName);
@@ -88,7 +99,7 @@ class PreViewViewDataGridSource extends DataGridSource {
     return Container(
       padding: const EdgeInsets.all(8.0),
       alignment: Alignment.center,
-      child: column.columnName == Const.rowImportHasVat
+      child: column.columnName == AppConstants.rowImportHasVat
           ? Switch(
               autofocus: true,
               value: displayText,
@@ -105,7 +116,8 @@ class PreViewViewDataGridSource extends DataGridSource {
                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16.0),
               ),
               //  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(regExp)],
-              keyboardType: isNumericType ? TextInputType.number : TextInputType.text,
+              keyboardType:
+                  isNumericType ? TextInputType.number : TextInputType.text,
               onChanged: (String value) {
                 if (value.isNotEmpty) {
                   newCellValue = value;
@@ -135,12 +147,19 @@ class PreViewViewDataGridSource extends DataGridSource {
   }
 
   @override
-  Future<void> onCellSubmit(DataGridRow dataGridRow, RowColumnIndex rowColumnIndex, GridColumn column) async {
-    final dynamic oldValue = dataGridRow.getCells().firstWhereOrNull((DataGridCell dataGridCell) => dataGridCell.columnName == column.columnName)?.value ?? '';
+  Future<void> onCellSubmit(DataGridRow dataGridRow,
+      RowColumnIndex rowColumnIndex, GridColumn column) async {
+    final dynamic oldValue = dataGridRow
+            .getCells()
+            .firstWhereOrNull((DataGridCell dataGridCell) =>
+                dataGridCell.columnName == column.columnName)
+            ?.value ??
+        '';
     final int dataRowIndex = dataGridRows.indexOf(dataGridRow);
     if (newCellValue == null || oldValue == newCellValue) {
       return;
     }
-    dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] = DataGridCell(columnName: column.columnName, value: newCellValue);
+    dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+        DataGridCell(columnName: column.columnName, value: newCellValue);
   }
 }

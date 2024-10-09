@@ -1,9 +1,9 @@
-import 'package:ba3_business_solutions/controller/account_view_model.dart';
-import 'package:ba3_business_solutions/controller/pattern_model_view.dart';
+import 'package:ba3_business_solutions/controller/account/account_view_model.dart';
+import 'package:ba3_business_solutions/controller/pattern/pattern_model_view.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../../../../model/global_model.dart';
+import '../../../model/global/global_model.dart';
 
 class allInvoiceDataGridSource extends DataGridSource {
   Map<String, GlobalModel> invoiceModle;

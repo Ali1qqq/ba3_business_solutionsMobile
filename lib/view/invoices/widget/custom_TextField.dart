@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../Const/const.dart';
+import '../../../core/constants/app_constants.dart';
 
 class CustomTextFieldWithIcon extends StatefulWidget {
   const CustomTextFieldWithIcon({
@@ -24,7 +24,8 @@ class CustomTextFieldWithIcon extends StatefulWidget {
   final bool isNumeric;
 
   @override
-  State<CustomTextFieldWithIcon> createState() => _CustomTextFieldWithIconState();
+  State<CustomTextFieldWithIcon> createState() =>
+      _CustomTextFieldWithIconState();
 }
 
 class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
@@ -60,7 +61,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Const.constHeightTextField,
+      height: AppConstants.constHeightTextField,
       child: TextFormField(
         // validator: validator,
         onFieldSubmitted: widget.onSubmitted,
@@ -69,7 +70,8 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
         // onSubmitted: onSubmitted,
         controller: widget.controller,
         inputFormatters: widget.inputFormatters,
-        onTap: () => widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
+        onTap: () => widget.controller.selection = TextSelection(
+            baseOffset: 0, extentOffset: widget.controller.text.length),
 
         // onTapOutside: onTapOutside,
         decoration: InputDecoration(
@@ -188,10 +190,12 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final bool isNumeric, enabled;
 
   @override
-  _CustomTextFieldWithoutIconState createState() => _CustomTextFieldWithoutIconState();
+  _CustomTextFieldWithoutIconState createState() =>
+      _CustomTextFieldWithoutIconState();
 }
 
-class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon> {
+class _CustomTextFieldWithoutIconState
+    extends State<CustomTextFieldWithoutIcon> {
   @override
   void initState() {
     super.initState();
@@ -224,7 +228,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Const.constHeightTextField,
+      height: AppConstants.constHeightTextField,
       child: TextFormField(
         onChanged: widget.onChanged,
         enabled: widget.enabled,
@@ -233,17 +237,15 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
         keyboardType: widget.keyboardType,
         scrollPadding: EdgeInsets.zero,
 
-
         cursorHeight: 15,
-        onTap: () => widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
+        onTap: () => widget.controller.selection = TextSelection(
+            baseOffset: 0, extentOffset: widget.controller.text.length),
         inputFormatters: widget.inputFormatters,
         decoration: InputDecoration(
           fillColor: Colors.white,
           filled: true,
           border: UnderlineInputBorder(
-
             borderSide: const BorderSide(
-
               color: Colors.black, // Change the border color
               width: 2.0, // Change the border width
             ),
@@ -256,7 +258,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
             ),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0), // Center the text vertically
+          contentPadding: const EdgeInsets.symmetric(
+              vertical: 0), // Center the text vertically
         ),
         textAlign: TextAlign.center,
         // Center the text horizontally

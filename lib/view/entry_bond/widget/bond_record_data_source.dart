@@ -1,11 +1,11 @@
-import 'package:ba3_business_solutions/model/global_model.dart';
+import 'package:ba3_business_solutions/model/global/global_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../../../Const/const.dart';
-import '../../../controller/account_view_model.dart';
-import '../../../model/account_model.dart';
 
+import '../../../controller/account/account_view_model.dart';
+import '../../../core/constants/app_strings.dart';
+import '../../../model/account/account_model.dart';
 
 class EntryBondRecordDataSource extends DataGridSource {
   List<DataGridRow> dataGridRows = [];
@@ -17,27 +17,43 @@ class EntryBondRecordDataSource extends DataGridSource {
     buildRowInit(recordData);
     addItem();
   }
+
   final accountController = Get.find<AccountViewModel>();
 
   buildRowInit(GlobalModel recordData) {
     dataGridRows = (recordData.entryBondRecord ?? [])
         .map<DataGridRow>((e) => DataGridRow(cells: [
-              DataGridCell<String>(columnName: Const.rowBondId, value: e.bondRecId),
-              DataGridCell<String>(columnName: Const.rowBondAccount, value: accountController.accountList.values.toList().firstWhereOrNull((_) => _.accId == e.bondRecAccount)?.accName),
-              DataGridCell<double>(columnName: Const.rowBondDebitAmount, value: e.bondRecDebitAmount),
-              DataGridCell<double>(columnName: Const.rowBondCreditAmount, value: e.bondRecCreditAmount),
-              DataGridCell<String>(columnName: Const.rowBondDescription, value: e.bondRecDescription),
+              DataGridCell<String>(
+                  columnName: AppStrings.rowBondId, value: e.bondRecId),
+              DataGridCell<String>(
+                  columnName: AppStrings.rowBondAccount,
+                  value: accountController.accountList.values
+                      .toList()
+                      .firstWhereOrNull((_) => _.accId == e.bondRecAccount)
+                      ?.accName),
+              DataGridCell<double>(
+                  columnName: AppStrings.rowBondDebitAmount,
+                  value: e.bondRecDebitAmount),
+              DataGridCell<double>(
+                  columnName: AppStrings.rowBondCreditAmount,
+                  value: e.bondRecCreditAmount),
+              DataGridCell<String>(
+                  columnName: AppStrings.rowBondDescription,
+                  value: e.bondRecDescription),
             ]))
         .toList();
   }
 
   void addItem() {
     dataGridRows.add(const DataGridRow(cells: [
-      DataGridCell<String>(columnName: Const.rowBondId, value: ""),
-      DataGridCell<String>(columnName: Const.rowBondAccount, value: ''),
-      DataGridCell<double>(columnName: Const.rowBondCreditAmount, value: null),
-      DataGridCell<double>(columnName: Const.rowBondDebitAmount, value: null),
-      DataGridCell<String>(columnName: Const.rowBondDescription, value: ""),
+      DataGridCell<String>(columnName: AppStrings.rowBondId, value: ""),
+      DataGridCell<String>(columnName: AppStrings.rowBondAccount, value: ''),
+      DataGridCell<double>(
+          columnName: AppStrings.rowBondCreditAmount, value: null),
+      DataGridCell<double>(
+          columnName: AppStrings.rowBondDebitAmount, value: null),
+      DataGridCell<String>(
+          columnName: AppStrings.rowBondDescription, value: ""),
     ]));
   }
 
@@ -64,7 +80,11 @@ class EntryBondRecordDataSource extends DataGridSource {
   }
 
   @override
-  Widget? buildTableSummaryCellWidget(GridTableSummaryRow summaryRow, GridSummaryColumn? summaryColumn, RowColumnIndex rowColumnIndex, String summaryValue) {
+  Widget? buildTableSummaryCellWidget(
+      GridTableSummaryRow summaryRow,
+      GridSummaryColumn? summaryColumn,
+      RowColumnIndex rowColumnIndex,
+      String summaryValue) {
     return Container(
       padding: EdgeInsets.all(15.0),
       child: Text(summaryValue),
@@ -183,7 +203,8 @@ class EntryBondRecordDataSource extends DataGridSource {
 
   // description
   @override
-  Future<bool> canSubmitCell(DataGridRow dataGridRow, RowColumnIndex rowColumnIndex, GridColumn column) async {
+  Future<bool> canSubmitCell(DataGridRow dataGridRow,
+      RowColumnIndex rowColumnIndex, GridColumn column) async {
     // Return false, to retain in edit mode.
     return false; // or super.canSubmitCell(dataGridRow, rowColumnIndex, column);
   }
@@ -326,8 +347,10 @@ class EntryBondRecordDataSource extends DataGridSource {
   List<String> searchText(String query) {
     AccountViewModel accountController = Get.find<AccountViewModel>();
     products = accountController.accountList.values.toList().where((item) {
-      var name = item.accName.toString().toLowerCase().contains(query.toLowerCase());
-      var code = item.accCode.toString().toLowerCase().contains(query.toLowerCase());
+      var name =
+          item.accName.toString().toLowerCase().contains(query.toLowerCase());
+      var code =
+          item.accCode.toString().toLowerCase().contains(query.toLowerCase());
       // var type = item.accType==Const.accountTypeDefault;
       return (name || code);
     }).toList();
