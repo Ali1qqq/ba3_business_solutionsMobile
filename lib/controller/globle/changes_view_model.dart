@@ -11,7 +11,7 @@ class ChangesViewModel extends GetxController {
   List allReadFlags = [];
 
   ChangesViewModel() {
-    listenChanges();
+
     /*  FirebaseFirestore.instance.collection(Const.readFlagsCollection).doc("0").snapshots().listen((event) {
       allReadFlags.clear();
       print(event.data());

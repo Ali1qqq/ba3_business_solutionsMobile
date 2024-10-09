@@ -50,9 +50,12 @@ class UserTimeView extends StatelessWidget {
             if (logic.allUserList[logic.myUserModel!.userId!]?.logInDateList
                     ?.lastOrNull !=
                 null) ...[
-              Text(
-                AppStrings.lastLogin.tr,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  AppStrings.lastLogin.tr,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               item(
                 formatDateTimeFromString(logic
@@ -67,9 +70,12 @@ class UserTimeView extends StatelessWidget {
             if (logic.allUserList[logic.myUserModel?.userId ?? '']
                     ?.logOutDateList?.lastOrNull !=
                 null) ...[
-              Text(
-                AppStrings.lastLogout.tr,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  AppStrings.lastLogout.tr,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               item(
                 formatDateTimeFromString(logic

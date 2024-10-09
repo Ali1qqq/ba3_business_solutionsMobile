@@ -42,14 +42,14 @@ class InvoiceRecordModel {
     invRecProduct =
         getProductIdFromName(map['invRecProduct']) ?? map['invRecProduct'];
     invRecQuantity = int.tryParse(
-        replaceArabicNumbersWithEnglish(map['invRecQuantity'].toString()));
+        replaceArabicNumbersWithEnglish(map['invRecQuantity'].toString()))??1;
     invRecSubTotal = double.tryParse(
-        replaceArabicNumbersWithEnglish(map['invRecSubTotal'].toString()));
-    invRecTotal = double.tryParse(map['invRecTotal'].toString());
-    invRecVat = double.tryParse((map['invRecVat']).toString());
+        replaceArabicNumbersWithEnglish(map['invRecSubTotal'].toString()))??0.0;
+    invRecTotal = double.tryParse(map['invRecTotal'].toString())??0.0;
+    invRecVat = double.tryParse((map['invRecVat']).toString())??0.0;
     invRecIsLocal = map['invRecIsLocal'];
     invRecGift = int.tryParse(
-        replaceArabicNumbersWithEnglish(map['invRecGift'].toString()));
+        replaceArabicNumbersWithEnglish(map['invRecGift'].toString()))??0;
     invRecGiftTotal =
         (int.tryParse(map['invRecGiftTotal'].toString()) ?? 0) * 1.0;
   }

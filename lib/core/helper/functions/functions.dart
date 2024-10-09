@@ -493,11 +493,10 @@ bool isWithinRegion(Position position, double targetLatitude,
 
 bool checkLogin(Position? position) {
   if (position != null) {
-    double targetLatitude = 25.79357172212387; // Latitude المنطقة المستهدفة
-    double targetLongitude = 55.94839519940061; // Longitude المنطقة المستهدفة
-    double radiusInMeters = 15; // نصف القطر بالمتر
-    // 25.79357172212387, 55.94839519940061
-    // 25.793297676709503, 55.94835295584547
+    double targetLatitude = 25.793679566610773; // Latitude المنطقة المستهدفة
+    double targetLongitude = 55.948330278435; // Longitude المنطقة المستهدفة
+    double radiusInMeters = 25; // نصف القطر بالمتر
+    // 25.793679566610773, 55.948330278435
     if (isWithinRegion(
         position, targetLatitude, targetLongitude, radiusInMeters)) {
       print("المستخدم داخل المنطقة");

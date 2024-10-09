@@ -47,7 +47,7 @@ class _SellerTargetState extends State<SellerTarget> {
         actions: const [],
         title: FittedBox(
           child: Text(
-           AppStrings.achievementsBoardTitle.tr,
+            AppStrings.achievementsBoardTitle.tr,
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
         ),
@@ -60,12 +60,12 @@ class _SellerTargetState extends State<SellerTarget> {
             children: [
               Column(
                 children: [
-                   Text(
-                    AppStrings. mobileTargetTitle.tr ,
+                  Text(
+                    AppStrings.mobileTargetTitle.tr,
                     style: TextStyle(fontSize: 22),
                   ),
                   SizedBox(
-                    width: Get.width ,
+                    width: Get.width,
                     height: 500,
                     child: ListView(
                       physics: const ClampingScrollPhysics(),
@@ -83,12 +83,12 @@ class _SellerTargetState extends State<SellerTarget> {
               ),
               Column(
                 children: [
-                   Text(
-                    AppStrings.accessoriesTargetTitle .tr,
+                  Text(
+                    AppStrings.accessoriesTargetTitle.tr,
                     style: TextStyle(fontSize: 22),
                   ),
                   SizedBox(
-                    width: Get.width ,
+                    width: Get.width,
                     height: 500,
                     child: ListView(
                       physics: const ClampingScrollPhysics(),
@@ -102,7 +102,6 @@ class _SellerTargetState extends State<SellerTarget> {
                       ],
                     ),
                   ),
-
                 ],
               ),
             ],
@@ -146,16 +145,20 @@ class _SellerTargetState extends State<SellerTarget> {
                       bool isDone = count >= model.taskQuantity!;
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Radio(toggleable: false, value: isDone, groupValue: true, onChanged: null),
-                            const SizedBox(
-                              width: 5,
-                            ),
                             Text(
-                              "بيع  ${model.taskQuantity}  من  ${getProductNameFromId(model.taskProductId)}  لقد بعت  $count",
+                              "  لقد بعت  $count",
                               style: TextStyle(fontSize: 20, color: isDone ? Colors.green : Colors.red),
                             ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Text(
+                                "بيع  ${model.taskQuantity}  من  ${getProductNameFromId(model.taskProductId)}",
+                                style: TextStyle(fontSize: 20, color: isDone ? Colors.green : Colors.red),
+                              ),
+                            ),
+                            const Divider(height: 5,)
                           ],
                         ),
                       );
@@ -181,13 +184,18 @@ class _SellerTargetState extends State<SellerTarget> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           SizedBox(
+                          SizedBox(
                             width: 150,
                             child: Text(
-                                AppStrings.firstEntryTimeLabel.tr ,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
+                              AppStrings.firstEntryTimeLabel.tr,
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                            ),
                           ),
                           Expanded(
-                            child: Text(sellerModel?.sellerTime!.firstTimeEnter ?? '',style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 24,color: Colors.blue),),
+                            child: Text(
+                              sellerModel?.sellerTime!.firstTimeEnter ?? '',
+                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24, color: Colors.blue),
+                            ),
                           ),
                         ],
                       ),
@@ -197,81 +205,108 @@ class _SellerTargetState extends State<SellerTarget> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           SizedBox(
+                          SizedBox(
                             width: 150,
-                            child: Text(AppStrings.firstExitTimeLabel.tr ,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
+                            child: Text(
+                              AppStrings.firstExitTimeLabel.tr,
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                            ),
                           ),
                           Expanded(
-                            child: Text(sellerModel?.sellerTime!.firstTimeOut ?? '',style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 24,color: Colors.blue),),
+                            child: Text(
+                              sellerModel?.sellerTime!.firstTimeOut ?? '',
+                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24, color: Colors.blue),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    if(sellerModel?.sellerTime!.secondTimeEnter!=''&&sellerModel?.sellerTime!.secondTimeEnter!=null)
-                      ...[  SizedBox(
+                    if (sellerModel?.sellerTime!.secondTimeEnter != '' && sellerModel?.sellerTime!.secondTimeEnter != null) ...[
+                      SizedBox(
                         width: Get.width * 0.6,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                             SizedBox(
+                            SizedBox(
                               width: 150,
-                              child: Text(AppStrings.breakStartTimeLabel.tr,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
+                              child: Text(
+                                AppStrings.breakStartTimeLabel.tr,
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                              ),
                             ),
                             Expanded(
-                              child: Text(sellerModel?.sellerTime!.firstTimeOut ?? '',style: const TextStyle(fontWeight: FontWeight.w700,color: Colors.blue,fontSize: 24),),
+                              child: Text(
+                                sellerModel?.sellerTime!.firstTimeOut ?? '',
+                                style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.blue, fontSize: 24),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                        SizedBox(
-                          width: Get.width * 0.6,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                               SizedBox(
-                                width: 150,
-                                child: Text(AppStrings.breakEndTimeLabel.tr,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
+                      SizedBox(
+                        width: Get.width * 0.6,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                AppStrings.breakEndTimeLabel.tr,
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
                               ),
-                              Expanded(
-                                child: Text(sellerModel?.sellerTime!.secondTimeEnter ?? '',style: const TextStyle(fontWeight: FontWeight.w700,color: Colors.blue,fontSize: 24),),
+                            ),
+                            Expanded(
+                              child: Text(
+                                sellerModel?.sellerTime!.secondTimeEnter ?? '',
+                                style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.blue, fontSize: 24),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                    SizedBox(
-                      width: Get.width * 0.6,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                           SizedBox(
-                            width: 150,
-                            child: Text(AppStrings.secondEntryTimeLabel.tr,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
-                          ),
-                          Expanded(
-                            child: Text(sellerModel?.sellerTime!.secondTimeEnter ?? '',style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 24,color: Colors.blue),),
-                          ),
-                        ],
                       ),
-                    ),
-                    SizedBox(
-                      width: Get.width * 0.6,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                           SizedBox(
-                            width: 150,
-                            child: Text(AppStrings.secondExitTimeLabel.tr,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
-                          ),
-                          Expanded(
-                            child: Text(sellerModel?.sellerTime!.secondTimeOut ?? '',style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 24,color: Colors.blue),),
-                          ),
-                        ],
+                      SizedBox(
+                        width: Get.width * 0.6,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                AppStrings.secondEntryTimeLabel.tr,
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                sellerModel?.sellerTime!.secondTimeEnter ?? '',
+                                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24, color: Colors.blue),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                      ],
-
-
-
+                      SizedBox(
+                        width: Get.width * 0.6,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                AppStrings.secondExitTimeLabel.tr,
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                sellerModel?.sellerTime!.secondTimeOut ?? '',
+                                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24, color: Colors.blue),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -280,9 +315,12 @@ class _SellerTargetState extends State<SellerTarget> {
           const SizedBox(
             height: 20,
           ),
-           Padding(
+          Padding(
             padding: EdgeInsets.all(8.0),
-            child: Text(AppStrings.remainingVacationDays.tr,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18,color: Colors.blue),),
+            child: Text(
+              AppStrings.remainingVacationDays.tr,
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Colors.blue),
+            ),
           ),
           if (sellerModel?.sellerDayOff?.firstOrNull != null)
             Padding(
@@ -310,7 +348,6 @@ class _SellerTargetState extends State<SellerTarget> {
                           sellerModel?.sellerDayOff![index].toString().split(" ")[0] ?? '',
                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                         ),
-
                       ],
                     ),
                   ),
@@ -327,7 +364,7 @@ class _SellerTargetState extends State<SellerTarget> {
                 border: Border.all(width: 2.0, color: Colors.red),
               ),
               margin: const EdgeInsets.all(15),
-              child:  Center(child: Text(AppStrings.noVacationDays.tr)),
+              child: Center(child: Text(AppStrings.noVacationDays.tr)),
             ),
         ],
       ),

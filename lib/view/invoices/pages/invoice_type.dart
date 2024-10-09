@@ -1,3 +1,4 @@
+import 'package:ba3_business_solutions/controller/globle/changes_view_model.dart';
 import 'package:ba3_business_solutions/controller/invoice/Invoice_Pluto_Edit_View_Model.dart';
 import 'package:ba3_business_solutions/controller/pattern/pattern_model_view.dart';
 import 'package:ba3_business_solutions/controller/user/user_management_model.dart';
@@ -33,6 +34,7 @@ class _InvoiceTypeState extends State<InvoiceType> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Get.find<ChangesViewModel>().    listenChanges();
   }
 
   @override
@@ -43,7 +45,7 @@ class _InvoiceTypeState extends State<InvoiceType> {
           children: [
             Text(
               AppStrings.invoices.tr,
-              style: TextStyle(fontWeight: FontWeight.w700),
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             Text(
               Get.find<UserManagementViewModel>().myUserModel?.userName ?? "",

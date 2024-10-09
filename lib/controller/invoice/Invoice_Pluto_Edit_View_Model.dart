@@ -448,6 +448,26 @@ class InvoicePlutoViewModel extends GetxController {
 
   List<InvoiceRecordModel> invoiceRecord = [];
 
+
+ bool cheekAllRecord(){
+   print("object");
+   bool hasError=false;
+    for (var element in  stateManager.rows.where((element) {
+      return element.cells['invRecProduct']!.value != '';
+    }).map(
+          (e) {
+        // e.cells['invRecProduct']!.value=getProductIdFromName(e.cells['invRecProduct']!.value)??e.cells['invRecProduct']!.value;
+        return InvoiceRecordModel.fromJsonPluto(e.toJson());
+      },
+    ).toList()) {
+      print(element.invRecTotal);
+      print((element.invRecSubTotal??0)+(element.invRecVat??0)*(element.invRecQuantity??0));
+      if(element.invRecTotal!=((element.invRecSubTotal??0)+(element.invRecVat??0))*(element.invRecQuantity??0)){
+        hasError=true;
+      }
+    }
+  return hasError;
+  }
   List<InvoiceRecordModel> handleSaveAll({required bool withOutProud}) {
     stateManager.setShowLoading(true);
     List<InvoiceRecordModel> invRecord = [];

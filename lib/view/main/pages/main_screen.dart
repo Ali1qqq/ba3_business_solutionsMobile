@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
+
 import '../../inventory/pages/inventory_type.dart';
 import '../../sellers/pages/seller_targets.dart';
 import '../../sellers/pages/seller_type.dart';
@@ -81,7 +82,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 color: Colors.blue,
                 child: TabContainer(
                   controller: tabController,
-                  tabEdge: TabEdge.right,
+                  tabEdge: View.of(context).platformDispatcher.locale.languageCode == 'ar'? TabEdge.right:TabEdge.left,
                   tabsEnd: 1,
                   tabsStart: 0,
                   tabMaxLength: 60,
