@@ -1,24 +1,14 @@
-import 'package:ba3_business_solutions/core/constants/app_constants.dart';
-import 'package:ba3_business_solutions/controller/globle/global_view_model.dart';
-import 'package:ba3_business_solutions/controller/invoice/invoice_view_model.dart';
-import 'package:ba3_business_solutions/model/global/global_model.dart';
-import 'package:ba3_business_solutions/core/utils/generate_id.dart';
 import 'package:ba3_business_solutions/view/dashboard/widget/dashboard_chart_widget1.dart';
 import 'package:ba3_business_solutions/view/invoices/pages/New_Invoice_View.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../controller/account/account_view_model.dart';
+import '../../../controller/invoice/Search_View_Controller.dart';
 import '../../../core/helper/functions/functions.dart';
 import '../../../core/shared/dialogs/Account_Option_Dialog.dart';
-import '../../../controller/account/account_view_model.dart';
-import '../../../controller/bond/bond_view_model.dart';
-import '../../../controller/product/product_view_model.dart';
-import '../../../model/account/account_model.dart';
-import '../../../model/bond/bond_record_model.dart';
-import '../../../model/bond/entry_bond_record_model.dart';
 import '../../../core/utils/hive.dart';
-import '../../accounts/pages/account_details.dart';
-import '../../invoices/Controller/Search_View_Controller.dart';
+import '../../../model/account/account_model.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});

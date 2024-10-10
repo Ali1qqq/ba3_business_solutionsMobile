@@ -1,9 +1,9 @@
 import 'package:ba3_business_solutions/controller/globle/changes_view_model.dart';
 import 'package:ba3_business_solutions/controller/invoice/Invoice_Pluto_Edit_View_Model.dart';
+import 'package:ba3_business_solutions/controller/invoice/Screen_View_Model.dart';
+import 'package:ba3_business_solutions/controller/invoice/Search_View_Controller.dart';
 import 'package:ba3_business_solutions/controller/pattern/pattern_model_view.dart';
 import 'package:ba3_business_solutions/controller/user/user_management_model.dart';
-import 'package:ba3_business_solutions/view/invoices/Controller/Screen_View_Model.dart';
-import 'package:ba3_business_solutions/view/invoices/Controller/Search_View_Controller.dart';
 import 'package:ba3_business_solutions/view/invoices/pages/New_Invoice_View.dart';
 import 'package:ba3_business_solutions/view/user_management/pages/login_view.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class _InvoiceTypeState extends State<InvoiceType> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Get.find<ChangesViewModel>().    listenChanges();
+    Get.find<ChangesViewModel>().listenChanges();
   }
 
   @override

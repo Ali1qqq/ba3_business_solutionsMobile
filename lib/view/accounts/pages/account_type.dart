@@ -7,9 +7,9 @@ import 'package:ba3_business_solutions/view/accounts/widget/add_account.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/invoice/Search_View_Controller.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/shared/dialogs/AccountDueOption.dart';
-import '../../invoices/Controller/Search_View_Controller.dart';
 import 'PartnerDueAccount.dart';
 import 'customer_pluto_edit_view.dart';
 

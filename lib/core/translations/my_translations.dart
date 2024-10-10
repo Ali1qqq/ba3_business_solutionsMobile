@@ -166,6 +166,10 @@ class MyTranslations implements Translations {
           AppStrings.noItemsToInventory: 'لا يوجد مواد لك يجب عليك جردها',
           AppStrings.writeQuantity: 'كتابة الكمية',
           AppStrings.enterNumber: 'ادخل العدد',
+          AppStrings.settings: 'الإعدادات',
+          AppStrings.selectLanguage: 'اختر اللغة: ',
+          AppStrings.languageArabic: 'العربية',
+          AppStrings.languageEnglish: 'الإنجليزية',
         },
         'en': {
           AppStrings.bond: 'The bond',
@@ -332,6 +336,10 @@ class MyTranslations implements Translations {
           AppStrings.noItemsToInventory: 'You have no items to inventory.',
           AppStrings.writeQuantity: 'Write Quantity',
           AppStrings.enterNumber: 'Enter Number',
+          AppStrings.settings: 'Settings',
+          AppStrings.selectLanguage: 'Select Language: ',
+          AppStrings.languageArabic: 'Arabic',
+          AppStrings.languageEnglish: 'English',
         },
       };
 }

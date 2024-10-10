@@ -8,6 +8,7 @@ import 'core/constants/app_constants.dart';
 import 'core/helper/init_app/init_app.dart';
 import 'core/shared/widgets/app_scroll_behavior.dart';
 import 'core/styling/app_themes.dart';
+import 'core/translations/translation_controller.dart';
 
 void main() async {
   await initializeApp();
@@ -21,11 +22,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TranslationController translationController =
+        Get.put(TranslationController());
     return GetMaterialApp(
       initialBinding: GetBinding(),
       debugShowCheckedModeBanner: false,
       scrollBehavior: AppScrollBehavior(),
-      locale: Get.deviceLocale,
+      locale: Locale(translationController.getLang()),
       translations: MyTranslations(),
       title: AppConstants.appTitle,
       theme: AppThemes.defaultTheme,

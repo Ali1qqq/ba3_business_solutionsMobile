@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
-
 import '../../inventory/pages/inventory_type.dart';
 import '../../sellers/pages/seller_targets.dart';
 import '../../sellers/pages/seller_type.dart';
+import '../../settings/settings_page.dart';
 import '../../userTime/pages/user_time_view.dart';
 
 class MainScreen extends StatefulWidget {
@@ -25,13 +25,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   List<({String name, Widget widget, String role})> rowData = [
     // (name: "لوحة التحكم", widget: const DashboardView(), role: Const.roleViewHome),
     (
-      name: AppStrings.invoices.tr,
+      name: AppStrings.invoices,
       widget: const InvoiceType(),
       role: AppConstants.roleViewInvoice
     ),
     Get.find<UserManagementViewModel>().myUserModel!.userSellerId != null
         ? (
-            name: AppStrings.target.tr,
+            name: AppStrings.target,
             widget: SellerTarget(
               sellerId: Get.find<UserManagementViewModel>()
                   .myUserModel!
@@ -40,18 +40,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             role: AppConstants.roleViewSeller
           )
         : (
-            name: AppStrings.sellers.tr,
+            name: AppStrings.sellers,
             widget: const SellerType(),
             role: AppConstants.roleViewSeller
           ),
     (
-      name: AppStrings.inventory.tr,
+      name: AppStrings.inventory,
       widget: const InventoryType(),
       role: AppConstants.roleViewInventory
     ),
     (
-      name: AppStrings.attendance.tr,
+      name: AppStrings.attendance,
       widget: const UserTimeView(),
+      role: AppConstants.roleViewInventory
+    ),
+    (
+      name: AppStrings.settings,
+      widget: const SettingsPage(),
       role: AppConstants.roleViewInventory
     ),
   ];
@@ -82,7 +87,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 color: Colors.blue,
                 child: TabContainer(
                   controller: tabController,
-                  tabEdge: View.of(context).platformDispatcher.locale.languageCode == 'ar'? TabEdge.right:TabEdge.left,
+                  tabEdge:
+                      View.of(context).platformDispatcher.locale.languageCode ==
+                              'ar'
+                          ? TabEdge.right
+                          : TabEdge.left,
                   tabsEnd: 1,
                   tabsStart: 0,
                   tabMaxLength: 60,
@@ -105,7 +114,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     (index) {
                       return DrawerListTile(
                         index: index,
-                        title: rowData[index].name,
+                        title: rowData[index].name.tr,
                         press: () {
                           tabController.animateTo(index);
                           tabIndex = index;

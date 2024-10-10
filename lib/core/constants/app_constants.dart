@@ -1,10 +1,11 @@
 import 'package:ba3_business_solutions/controller/account/account_view_model.dart';
 
 import '../helper/enums/enums.dart';
-import '../utils/hive.dart';
 
 abstract class AppConstants {
   static const String appTitle = 'Ba3 Business';
+  static const String appLangCode = 'appLangCode';
+  static const String defaultLangCode = 'ar';
   static String dataName = '';
   static bool isFreeType = false;
 

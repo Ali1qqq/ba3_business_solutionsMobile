@@ -7,8 +7,8 @@ import 'package:ba3_business_solutions/view/invoices/pages/New_Invoice_View.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/invoice/Search_View_Controller.dart';
 import '../../../view/accounts/pages/account_details.dart';
-import '../../../view/invoices/Controller/Search_View_Controller.dart';
 import '../../helper/functions/functions.dart';
 import '../../services/Get_Date_From_String.dart';
 import '../widgets/option_text_widget.dart';

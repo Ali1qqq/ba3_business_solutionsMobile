@@ -2,8 +2,8 @@ import 'package:ba3_business_solutions/controller/product/product_view_model.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/invoice/Search_View_Controller.dart';
 import '../../../main.dart';
-import '../../../view/invoices/Controller/Search_View_Controller.dart';
 import '../../../view/invoices/pages/New_Invoice_View.dart';
 import '../../../view/invoices/pages/all_invoices.dart';
 import '../../constants/app_strings.dart';

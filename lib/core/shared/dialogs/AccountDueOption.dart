@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../main.dart';
 import '../../../view/accounts/pages/All_Due_Account.dart';
-import '../../../view/invoices/Controller/Search_View_Controller.dart';
+import '../../../controller/invoice/Search_View_Controller.dart';
 import '../../../view/invoices/pages/New_Invoice_View.dart';
 import '../../constants/app_strings.dart';
 import '../widgets/option_text_widget.dart';

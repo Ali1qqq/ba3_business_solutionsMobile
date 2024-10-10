@@ -180,4 +180,9 @@ class AppStrings {
   static const String noItemsToInventory = "noItemsToInventory";
   static const String writeQuantity = "writeQuantity";
   static const String enterNumber = "Enter Number";
+
+  static const String settings = 'settings';
+  static const String selectLanguage = 'selectLanguage';
+  static const String languageEnglish = 'english';
+  static const String languageArabic = 'arabic';
 }

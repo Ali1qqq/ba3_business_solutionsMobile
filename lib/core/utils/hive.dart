@@ -4,6 +4,7 @@ import 'package:ba3_business_solutions/core/adapter/global_model_adapter.dart';
 import 'package:ba3_business_solutions/core/adapter/product_model_adapter.dart';
 import 'package:ba3_business_solutions/core/adapter/product_record_model_adapter.dart';
 import 'package:ba3_business_solutions/core/adapter/store_model_adapter.dart';
+import 'package:ba3_business_solutions/core/constants/app_constants.dart';
 import 'package:ba3_business_solutions/model/account/account_customer.dart';
 import 'package:ba3_business_solutions/model/account/account_model.dart';
 import 'package:ba3_business_solutions/model/global/global_model.dart';
@@ -11,11 +12,11 @@ import 'package:ba3_business_solutions/model/inventory/inventory_model.dart';
 import 'package:ba3_business_solutions/model/product/product_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../model/store/store_model.dart';
+import '../../model/warranty/Warranty_Model.dart';
 import '../adapter/Account_Customer_adapter.dart';
 import '../adapter/account_model_adapter.dart';
 import '../adapter/inventory_model_adapter.dart';
-import '../../model/warranty/Warranty_Model.dart';
-import '../../model/store/store_model.dart';
 
 class HiveDataBase {
   static late Box<GlobalModel> globalModelBox;
@@ -34,6 +35,8 @@ class HiveDataBase {
   // static late Box<int> timerTimeBox;
   static late Box<String> timerDateBox;
   static late Box<bool> isNewUser;
+
+  static late Box<String> appLang;
 
   static Future<void> init() async {
     // final directory = await getApplicationDocumentsDirectory();
@@ -56,6 +59,9 @@ class HiveDataBase {
     Hive.registerAdapter(AccountRecordAdapter());
     Hive.registerAdapter(ProductRecordModelAdapter());
     Hive.registerAdapter(InventoryModelAdapter());
+
+    appLang = await Hive.openBox<String>("appLang");
+
     productModelBox = await Hive.openBox<ProductModel>("AllProduct");
     warrantyModelBox = await Hive.openBox<WarrantyModel>("AllWarranty");
     accountCustomerBox =
@@ -112,4 +118,11 @@ class HiveDataBase {
     HiveDataBase.isFree.deleteFromDisk();
     HiveDataBase.accountCustomerBox.deleteFromDisk();
   }
+
+  static setAppLangCode(String langCode) {
+    appLang.put(AppConstants.appLangCode, langCode);
+  }
+
+  static String get getAppLangCode =>
+      appLang.get(AppConstants.appLangCode) ?? AppConstants.defaultLangCode;
 }
